@@ -18,4 +18,5 @@ void Plant::update(Time dt)
 
 	//Changing object according to parameters
 	m_Sprite.setScale(m_Scale, m_Scale);
+	m_VisionCircle.setScale(m_Scale, m_Scale);
 }

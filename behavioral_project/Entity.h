@@ -1,5 +1,6 @@
 #pragma once
 #include "SFML\Graphics.hpp"
+#include "Water.h"
 
 using namespace sf;
 
@@ -32,17 +33,27 @@ private:
 
 	Vector2f m_Resolution;
 
-	//State enumeration
-	enum class EntityState
-	{
-		IDLE, HUNGER, THIRST, DANGER
-	};
-
-	EntityState m_EntityState;
+	//States
+	bool m_IsHungry;
+	bool m_IsThirsty;
+	bool m_IsInDanger;
 	bool m_IsDead;
+
+	bool m_IsDrinking;
+
+	bool m_FoundWater;
+	bool m_FoundFood;
+	bool m_FoundDanger;
 
 	//Entity clock
 	float m_InternalClock;
+	float m_Timer;
+
+	//Visual sprites
+	Sprite m_DangerSprite;
+
+	//Vision circle
+	CircleShape m_VisionCircle;
 
 public:
 	/*Constructors and Destructor*/
@@ -72,6 +83,13 @@ public:
 	void setSprite(Sprite sprite);
 	Sprite getSprite();
 
+	//Danger Sprite
+	void setDangerSprite(Sprite sprite);
+	Sprite getDangerSprite();
+
+	//Vision Circle
+	CircleShape getCircleShape();
+
 	//Position
 	void setPosition(Vector2f position);
 	void setPosition(float x, float y);
@@ -86,10 +104,22 @@ public:
 	FloatRect getBoundaries();
 
 	//State
-	int getState();
-
-	//Dead
+	bool isHungry();
+	bool isThirsty();
+	bool isInDanger();
 	bool isDead();
+
+	bool isDrinking();
+	void setIsDrinking(bool set);
+
+	//Awareness
+	bool foundFood();
+	bool foundWater();
+	bool foundDanger();
+
+	void setFoundFood(bool set);
+	void setFoundWater(bool set);
+	void setFoundDanger(bool set);
 
 	/*Events*/
 	void death();

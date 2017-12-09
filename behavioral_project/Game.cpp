@@ -80,6 +80,10 @@ void Game::initialiseVariables()
 	backgroundTexture.loadFromFile("graphics/background.png");
 
 	backgroundSprite.setTexture(backgroundTexture);
+
+	//Danger sprite
+	dangerTexture.loadFromFile("graphics/danger.png");
+	dangerSprite.setTexture(dangerTexture);
 }
 
 void Game::handleInput()
@@ -108,6 +112,7 @@ void Game::handleInput()
 				herbivorePosition.x = rand() % (int)videoResolution.x;
 				herbivorePosition.y = rand() % (int)videoResolution.y;
 				factory.createHerbivore(herbivoreSprite, herbivorePosition, &herbivoreVector, videoResolution);
+				herbivoreVector.back().setDangerSprite(dangerSprite);
 			}
 
 			//Creating new carnivore objects
@@ -195,6 +200,9 @@ void Game::updateScene()
 	//Cleaning dead objects
 	factory.clean(&herbivoreVector, &carnivoreVector, &waterVector, &plantVector);
 
+	//Processing object logic
+	logic.processLogic(&herbivoreVector, &carnivoreVector, &waterVector, &plantVector);
+
 	/*DEBUG MODE*/
 
 	//Constructing and setting stringstreams for Debug Mode text display
@@ -215,7 +223,10 @@ void Game::updateScene()
 			ssDebugMode << "Position: " << herbivoreVector[i].getPosition().x << ", " << herbivoreVector[i].getPosition().y << std::endl;
 			ssDebugMode << "Next position: " << herbivoreVector[i].getNextPosition().x << ", " << herbivoreVector[i].getNextPosition().y << std::endl;
 			ssDebugMode << "Speed: " << herbivoreVector[i].getSpeed() << std::endl;
-			ssDebugMode << "State: " << herbivoreVector[i].getState() << std::endl;
+			ssDebugMode << "Is thirsty: " << herbivoreVector[i].isThirsty() << std::endl;
+			ssDebugMode << "Found water: " << herbivoreVector[i].foundWater() << std::endl;
+			ssDebugMode << "Circle radius: " << herbivoreVector[i].getCircleShape().getRadius() << std::endl;
+			ssDebugMode << "Length: " << logic.getLength() << std::endl;
 			ssDebugMode << std::endl << std::endl;
 			debugText.setString(ssDebugMode.str());
 
@@ -235,7 +246,6 @@ void Game::updateScene()
 			ssDebugMode << "Position: " << carnivoreVector[i].getPosition().x << ", " << carnivoreVector[i].getPosition().y << std::endl;
 			ssDebugMode << "Next position: " << carnivoreVector[i].getNextPosition().x << ", " << carnivoreVector[i].getNextPosition().y << std::endl;
 			ssDebugMode << "Speed: " << carnivoreVector[i].getSpeed() << std::endl;
-			ssDebugMode << "State: " << carnivoreVector[i].getState() << std::endl;
 			ssDebugMode << std::endl << std::endl;
 			debugText.setString(ssDebugMode.str());
 
@@ -250,6 +260,7 @@ void Game::updateScene()
 			ssDebugMode << "Test subject properties:" << std::endl;
 			ssDebugMode << "Position: " << waterVector[i].getPosition().x << ", " << waterVector[i].getPosition().y << std::endl;
 			ssDebugMode << "Scale: " << waterVector[i].getScale() << std::endl;
+			ssDebugMode << "Circle radius: " << waterVector[i].getCircleShape().getRadius() << std::endl;
 			ssDebugMode << std::endl << std::endl;
 			debugText.setString(ssDebugMode.str());
 
@@ -288,6 +299,7 @@ void Game::drawScene()
 		for (int i = 0; i <= waterVector.size() - 1; i++)
 		{
 			gameWindow.draw(waterVector[i].getSprite());
+			gameWindow.draw(waterVector[i].getCircleShape());
 		}
 	}
 
@@ -296,6 +308,7 @@ void Game::drawScene()
 		for (int i = 0; i <= plantVector.size() - 1; i++)
 		{
 			gameWindow.draw(plantVector[i].getSprite());
+			gameWindow.draw(plantVector[i].getCircleShape());
 		}
 	}
 
@@ -304,6 +317,12 @@ void Game::drawScene()
 		for (int i = 0; i <= herbivoreVector.size() - 1; i++)
 		{
 			gameWindow.draw(herbivoreVector[i].getSprite());
+			gameWindow.draw(herbivoreVector[i].getCircleShape());
+
+			if (herbivoreVector[i].isInDanger())
+			{
+				gameWindow.draw(herbivoreVector[i].getDangerSprite());
+			}
 		}
 	}
 
@@ -312,6 +331,7 @@ void Game::drawScene()
 		for (int i = 0; i <= carnivoreVector.size() - 1; i++)
 		{
 			gameWindow.draw(carnivoreVector[i].getSprite());
+			gameWindow.draw(carnivoreVector[i].getCircleShape());
 		}
 	}
 

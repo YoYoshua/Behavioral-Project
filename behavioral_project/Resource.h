@@ -21,6 +21,9 @@ private:
 	//Constant variables
 	float DEFAULT_AMOUNT = 200;
 
+	//Visibility circle
+	CircleShape m_VisionCircle;
+
 public:
 	/*Constructors and Destructor*/
 	Resource();
@@ -32,6 +35,9 @@ public:
 	void setSprite(Sprite sprite);
 	Sprite getSprite();
 
+	//Vision Circle
+	CircleShape getCircleShape();
+
 	//Scale
 	void setScale(float scale);
 	float getScale();
@@ -40,6 +46,10 @@ public:
 	void setPosition(Vector2f position);
 	void setPosition(float x, float y);
 	Vector2f getPosition();
+
+	//Amount
+	void setAmount(float amount);
+	float getAmount();
 
 	//Emptiness
 	bool isEmpty();

@@ -14,8 +14,12 @@ Entity::Entity()
 	m_Thirst = 50.0f;
 	m_Speed = 150;
 
-	m_EntityState = EntityState::IDLE;
+	m_IsHungry = false;
+	m_IsThirsty = false;
+	m_IsInDanger = true;
 	m_IsDead = false;
+
+	m_IsDrinking = false;
 
 	m_Resolution.x = 1980;
 	m_Resolution.y = 1020;
@@ -38,12 +42,25 @@ Entity::Entity(Sprite sprite, Vector2f position, Vector2f resolution)
 	m_Thirst = 50.0f;
 	m_Speed = 150;
 
-	m_EntityState = EntityState::IDLE;
+	m_IsHungry = false;
+	m_IsThirsty = false;
+	m_IsInDanger = false;
 	m_IsDead = false;
+
+	m_FoundFood = false;
+	m_FoundWater = false;
+	m_FoundDanger = false;
 
 	m_Resolution = resolution;
 
 	m_InternalClock = 0;
+
+	m_VisionCircle.setRadius(150);
+	m_VisionCircle.setOrigin(150, 150);
+	m_VisionCircle.setPosition(m_Position);
+	m_VisionCircle.setOutlineColor(Color::Black);
+	m_VisionCircle.setOutlineThickness(1);
+	m_VisionCircle.setFillColor(Color::Transparent);
 }
 
 
@@ -108,6 +125,25 @@ Sprite Entity::getSprite()
 	return m_Sprite;
 }
 
+//Danger Sprite
+void Entity::setDangerSprite(Sprite sprite)
+{
+	m_DangerSprite = sprite;
+	m_DangerSprite.setOrigin(5, 30);
+	m_DangerSprite.setPosition(m_Position);
+}
+
+Sprite Entity::getDangerSprite()
+{
+	return m_DangerSprite;
+}
+
+//Vision Circle
+CircleShape Entity::getCircleShape()
+{
+	return m_VisionCircle;
+}
+
 //Position
 void Entity::setPosition(Vector2f position)
 {
@@ -147,25 +183,34 @@ FloatRect Entity::getBoundaries()
 	return m_Boundaries;
 }
 
-//State
-int Entity::getState()
+/*State*/
+//Hungry
+bool Entity::isHungry()
 {
-	if (m_EntityState == EntityState::IDLE)
-	{
-		return 1;
-	}
-	else if (m_EntityState == EntityState::HUNGER)
-	{
-		return 2;
-	}
-	else if (m_EntityState == EntityState::THIRST)
-	{
-		return 3;
-	}
-	else
-	{
-		return 0;
-	}
+	return m_IsHungry;
+}
+
+//Thirsty
+bool Entity::isThirsty()
+{
+	return m_IsThirsty;
+}
+
+//In Danger
+bool Entity::isInDanger()
+{
+	return m_IsInDanger;
+}
+
+//Drinking
+bool Entity::isDrinking()
+{
+	return m_IsDrinking;
+}
+
+void Entity::setIsDrinking(bool set)
+{
+	m_IsDrinking = set;
 }
 
 //Dead
@@ -173,6 +218,38 @@ bool Entity::isDead()
 {
 	return m_IsDead;
 }
+
+//Awareness
+bool Entity::foundFood()
+{
+	return m_FoundFood;
+}
+
+bool Entity::foundWater()
+{
+	return m_FoundWater;
+}
+
+bool Entity::foundDanger()
+{
+	return m_FoundDanger;
+}
+
+void Entity::setFoundFood(bool set)
+{
+	m_FoundFood = set;
+}
+
+void Entity::setFoundWater(bool set)
+{
+	m_FoundWater = set;
+}
+
+void Entity::setFoundDanger(bool set)
+{
+	m_FoundDanger = set;
+}
+
 
 /*Events*/
 
@@ -183,18 +260,25 @@ void Entity::death()
 
 void Entity::stateChange()
 {
-	if (m_Hunger >= 75 && m_EntityState == EntityState::IDLE)
+	if (m_Hunger >= 75)
 	{
-		m_EntityState = EntityState::HUNGER;
+		m_IsHungry = true;
 	}
-	else if (m_Thirst >= 75 && m_EntityState != EntityState::THIRST)
+	else
 	{
-		m_EntityState = EntityState::THIRST;
+		m_IsHungry = false;
 	}
-	else if (m_Hunger < 75 && m_Thirst < 75 && m_EntityState != EntityState::IDLE)
+
+	if (m_Thirst >= 75)
 	{
-		m_EntityState = EntityState::IDLE;
+		m_IsThirsty = true;
 	}
+	else
+	{
+		m_IsThirsty = false;
+	}
+
+	//Danger system
 }
 
 /*Updating*/
@@ -203,7 +287,7 @@ void Entity::updateParameters(Time dt)
 {
 	//Lowering parameters with passing time
 	m_Hunger = m_Hunger + dt.asSeconds();
-	m_Thirst = m_Thirst + dt.asSeconds() / 2;
+	m_Thirst = m_Thirst + dt.asSeconds();
 
 	//Updating speed parameter according to hunger and thirst
 	m_Speed = DEFAULT_SPEED - ((int)m_Hunger - 50) - ((int)m_Thirst - 50);

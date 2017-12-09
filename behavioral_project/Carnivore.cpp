@@ -24,16 +24,21 @@ Carnivore::~Carnivore()
 
 void Carnivore::behaviour(Time dt)
 {
-	if (m_EntityState == EntityState::IDLE)
+	if (isInDanger())
 	{
 		idleBehaviour(dt);
 	}
-	else if (m_EntityState == EntityState::HUNGER)
+	else if (isThirsty() && !isInDanger())
 	{
 		//TO DO
 		idleBehaviour(dt);
 	}
-	else if (m_EntityState == EntityState::THIRST)
+	else if (isHungry() && !isInDanger())
+	{
+		//TO DO
+		idleBehaviour(dt);
+	}
+	else
 	{
 		//TO DO
 		idleBehaviour(dt);
@@ -83,5 +88,6 @@ void Carnivore::update(Time dt)
 
 		//Updating position of the sprite 
 		m_Sprite.setPosition(getPosition() - movementStep);
+		m_VisionCircle.setPosition(getPosition() - movementStep);
 	}
 }

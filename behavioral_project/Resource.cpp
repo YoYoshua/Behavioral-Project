@@ -32,6 +32,13 @@ Resource::Resource(Sprite sprite, Vector2f position, Vector2f resolution)
 	m_Scale = m_Amount / DEFAULT_AMOUNT;
 
 	m_IsEmpty = false;
+
+	m_VisionCircle.setRadius(50);
+	m_VisionCircle.setOrigin(50, 50);
+	m_VisionCircle.setPosition(m_Position);
+	m_VisionCircle.setOutlineColor(Color::Black);
+	m_VisionCircle.setOutlineThickness(1);
+	m_VisionCircle.setFillColor(Color::Transparent);
 }
 
 
@@ -49,6 +56,12 @@ void Resource::setSprite(Sprite sprite)
 Sprite Resource::getSprite()
 {
 	return m_Sprite;
+}
+
+//Vision Circle
+CircleShape Resource::getCircleShape()
+{
+	return m_VisionCircle;
 }
 
 //Scale
@@ -76,6 +89,17 @@ void Resource::setPosition(float x, float y)
 Vector2f Resource::getPosition()
 {
 	return m_Sprite.getPosition();
+}
+
+//Amount
+void Resource::setAmount(float amount)
+{
+	m_Amount = amount;
+}
+
+float Resource::getAmount()
+{
+	return m_Amount;
 }
 
 //Emptiness

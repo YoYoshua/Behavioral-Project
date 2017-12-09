@@ -24,18 +24,20 @@ Herbivore::~Herbivore()
 
 void Herbivore::behaviour(Time dt)
 {
-	if (m_EntityState == EntityState::IDLE)
+	if (isDrinking())
+	{
+		drinkWater()
+	}
+	if (isThirsty() && foundWater())
+	{
+		//Handling drinking water
+	}
+	else if (isThirsty() && !foundWater())
 	{
 		idleBehaviour(dt);
 	}
-	else if (m_EntityState == EntityState::HUNGER)
+	else
 	{
-		//TO DO
-		idleBehaviour(dt);
-	}
-	else if (m_EntityState == EntityState::THIRST)
-	{
-		//TO DO
 		idleBehaviour(dt);
 	}
 }
@@ -48,6 +50,12 @@ void Herbivore::idleBehaviour(Time dt)
 		m_NextPosition.x = rand() % (int)m_Resolution.x;
 		m_NextPosition.y = rand() % (int)m_Resolution.y;
 	}
+}
+
+void Herbivore::drinkWater(Water *water, Time dt)
+{
+	m_Thirst = m_Thirst + dt.asSeconds() * 4;
+	water->setAmount(water->getAmount() - dt.asSeconds() * 4);
 }
 
 /*Update function*/
@@ -83,5 +91,7 @@ void Herbivore::update(Time dt)
 
 		//Updating position of the sprite 
 		m_Sprite.setPosition(getPosition() - movementStep);
+		m_DangerSprite.setPosition(getPosition() - movementStep);
+		m_VisionCircle.setPosition(getPosition() - movementStep);
 	}
 }

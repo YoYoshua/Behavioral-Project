@@ -25,6 +25,7 @@
     <ClCompile Include="Herbivore.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ObjectFactory.cpp" />
+    <ClCompile Include="ObjectLogic.cpp" />
     <ClCompile Include="Plant.cpp" />
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="Water.cpp" />
@@ -35,6 +36,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Herbivore.h" />
     <ClInclude Include="ObjectFactory.h" />
+    <ClInclude Include="ObjectLogic.h" />
     <ClInclude Include="Plant.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Water.h" />

@@ -1,9 +1,9 @@
 #pragma once
-
 #include <sstream>
 
 #include "SFML\Graphics.hpp"
 #include "ObjectFactory.h"
+#include "ObjectLogic.h"
 
 class Game
 {
@@ -50,6 +50,10 @@ private:
 	Sprite plantSprite;
 	std::vector<Plant> plantVector;
 
+	//Various textures
+	Texture dangerTexture;
+	Sprite dangerSprite;
+
 	/*Text related variables*/
 	Font debugFont;
 	Text debugText;
@@ -61,6 +65,7 @@ private:
 
 	/*Various objects*/
 	ObjectFactory factory;
+	ObjectLogic logic;
 
 public:
 	RenderWindow gameWindow;

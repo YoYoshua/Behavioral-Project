@@ -15,6 +15,7 @@ public:
 	/*Behavioral functions*/
 	void behaviour(Time dt);
 	void idleBehaviour(Time dt);
+	void drinkWater(Water *water, Time dt);
 
 	//Update function
 	void update(Time dt);
