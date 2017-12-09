@@ -20,12 +20,23 @@ private:
 	/*Video related variables*/
 	Vector2f videoResolution;
 
-	//Object related variables
+	//Background
+	Vector2f backgroundPosition;
+	Texture backgroundTexture;
+	Sprite backgroundSprite;
+
+	/*Object related variables*/
 	//Herbivore
 	Vector2f herbivorePosition;
 	Texture herbivoreTexture;
 	Sprite herbivoreSprite;
 	std::vector<Herbivore> herbivoreVector;
+
+	//Carnivore
+	Vector2f carnivorePosition;
+	Texture carnivoreTexture;
+	Sprite carnivoreSprite;
+	std::vector<Carnivore> carnivoreVector;
 
 	//Water
 	Vector2f waterPosition;

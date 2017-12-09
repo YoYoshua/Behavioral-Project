@@ -17,6 +17,12 @@ void ObjectFactory::createHerbivore(Sprite sprite, Vector2f position, std::vecto
 	vector->push_back(herbivore);
 }
 
+void ObjectFactory::createCarnivore(Sprite sprite, Vector2f position, std::vector<Carnivore> *vector, Vector2f resolution)
+{
+	Carnivore carnivore(sprite, position, resolution);
+	vector->push_back(carnivore);
+}
+
 void ObjectFactory::createWater(Sprite sprite, Vector2f position, std::vector<Water> *vector, Vector2f resolution)
 {
 	Water water(sprite, position, resolution);
@@ -29,7 +35,7 @@ void ObjectFactory::createPlant(Sprite sprite, Vector2f position, std::vector<Pl
 	vector->push_back(plant);
 }
 
-void ObjectFactory::clean(std::vector<Herbivore> *h_vector, std::vector<Water> *w_vector, std::vector<Plant> *p_vector)
+void ObjectFactory::clean(std::vector<Herbivore> *h_vector, std::vector<Carnivore> *c_vector, std::vector<Water> *w_vector, std::vector<Plant> *p_vector)
 {
 	//Cleaning herbivore vector
 	if (!h_vector->empty() && h_vector->size() != 1)
@@ -47,6 +53,25 @@ void ObjectFactory::clean(std::vector<Herbivore> *h_vector, std::vector<Water> *
 		if ((*h_vector)[0].isDead())
 		{
 			h_vector->pop_back();
+		}
+	}
+
+	//Cleaning carnivore vector
+	if (!c_vector->empty() && c_vector->size() != 1)
+	{
+		for (int i = 0; i <= c_vector->size() - 1; i++)
+		{
+			if ((*c_vector)[i].isDead())
+			{
+				c_vector->erase(c_vector->begin() + i);
+			}
+		}
+	}
+	else if (!c_vector->empty() && c_vector->size() == 1)
+	{
+		if ((*c_vector)[0].isDead())
+		{
+			c_vector->pop_back();
 		}
 	}
 

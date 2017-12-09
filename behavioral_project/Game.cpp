@@ -35,7 +35,7 @@ void Game::initialiseVariables()
 	debugFont.loadFromFile("font/lucon.ttf");
 
 	//Constructing and setting Text objects
-	debugText.setCharacterSize(14);
+	debugText.setCharacterSize(10);
 	debugText.setFont(debugFont);
 	debugText.setPosition(40, 40);
 
@@ -48,6 +48,14 @@ void Game::initialiseVariables()
 	herbivoreTexture.loadFromFile("graphics/herbivore.png");
 
 	herbivoreSprite.setTexture(herbivoreTexture);
+
+	//Carnivore
+	carnivorePosition.x = videoResolution.x / 2;
+	carnivorePosition.y = videoResolution.y / 2;
+
+	carnivoreTexture.loadFromFile("graphics/carnivore.png");
+
+	carnivoreSprite.setTexture(carnivoreTexture);
 
 	//Water
 	waterPosition.x = videoResolution.x / 2;
@@ -64,6 +72,14 @@ void Game::initialiseVariables()
 	plantTexture.loadFromFile("graphics/plant.png");
 
 	plantSprite.setTexture(plantTexture);
+
+	//Background
+	backgroundPosition.x = videoResolution.x / 2;
+	backgroundPosition.y = videoResolution.y / 2;
+
+	backgroundTexture.loadFromFile("graphics/background.png");
+
+	backgroundSprite.setTexture(backgroundTexture);
 }
 
 void Game::handleInput()
@@ -94,6 +110,16 @@ void Game::handleInput()
 				factory.createHerbivore(herbivoreSprite, herbivorePosition, &herbivoreVector, videoResolution);
 			}
 
+			//Creating new carnivore objects
+			if (inputEvent.key.code == Keyboard::C)
+			{
+				srand((int)time(0) * dt.asMilliseconds() + 1 * 850 * carnivoreVector.size() + 5);
+				carnivorePosition.x = rand() % (int)videoResolution.x;
+				carnivorePosition.y = rand() % (int)videoResolution.y;
+				factory.createCarnivore(carnivoreSprite, carnivorePosition, &carnivoreVector, videoResolution);
+			}
+
+			//Creating new water objects
 			if (inputEvent.key.code == Keyboard::W)
 			{
 				srand((int)time(0) * dt.asMilliseconds() + 1 * 900 * waterVector.size() + 5);
@@ -102,6 +128,7 @@ void Game::handleInput()
 				factory.createWater(waterSprite, waterPosition, &waterVector, videoResolution);
 			}
 
+			//Creating new plant objects
 			if (inputEvent.key.code == Keyboard::P)
 			{
 				srand((int)time(0) * dt.asMilliseconds() + 1 * 1000 * plantVector.size() + 5);
@@ -138,6 +165,15 @@ void Game::updateScene()
 		}
 	}
 
+	//Updating carnivore vector
+	if (!carnivoreVector.empty())
+	{
+		for (int i = 0; i <= carnivoreVector.size() - 1; i++)
+		{
+			carnivoreVector[i].update(dt);
+		}
+	}
+
 	//Updating water vector
 	if (!waterVector.empty())
 	{
@@ -157,7 +193,7 @@ void Game::updateScene()
 	}
 	
 	//Cleaning dead objects
-	factory.clean(&herbivoreVector, &waterVector, &plantVector);
+	factory.clean(&herbivoreVector, &carnivoreVector, &waterVector, &plantVector);
 
 	/*DEBUG MODE*/
 
@@ -186,6 +222,26 @@ void Game::updateScene()
 		}
 	}
 
+	if (!carnivoreVector.empty())
+	{
+
+		for (int i = 0; i <= carnivoreVector.size() - 1; i++)
+		{
+			ssDebugMode << "Carnivore object #" << i << std::endl;
+			ssDebugMode << "Test subject properties:" << std::endl;
+			ssDebugMode << "Health: " << carnivoreVector[i].getHealth() << std::endl;
+			ssDebugMode << "Hunger: " << (int)carnivoreVector[i].getHunger() << std::endl;
+			ssDebugMode << "Thirst: " << (int)carnivoreVector[i].getThirst() << std::endl;
+			ssDebugMode << "Position: " << carnivoreVector[i].getPosition().x << ", " << carnivoreVector[i].getPosition().y << std::endl;
+			ssDebugMode << "Next position: " << carnivoreVector[i].getNextPosition().x << ", " << carnivoreVector[i].getNextPosition().y << std::endl;
+			ssDebugMode << "Speed: " << carnivoreVector[i].getSpeed() << std::endl;
+			ssDebugMode << "State: " << carnivoreVector[i].getState() << std::endl;
+			ssDebugMode << std::endl << std::endl;
+			debugText.setString(ssDebugMode.str());
+
+		}
+	}
+
 	if (!waterVector.empty())
 	{
 		for (int i = 0; i <= waterVector.size() - 1; i++)
@@ -204,7 +260,7 @@ void Game::updateScene()
 	{
 		for (int i = 0; i <= plantVector.size() - 1; i++)
 		{
-			ssDebugMode << "Water object #" << i << std::endl;
+			ssDebugMode << "Plant object #" << i << std::endl;
 			ssDebugMode << "Test subject properties:" << std::endl;
 			ssDebugMode << "Position: " << plantVector[i].getPosition().x << ", " << plantVector[i].getPosition().y << std::endl;
 			ssDebugMode << "Scale: " << plantVector[i].getScale() << std::endl;
@@ -222,6 +278,9 @@ void Game::drawScene()
 
 	//Clearing scene
 	gameWindow.clear();
+
+	//Drawing background
+	gameWindow.draw(backgroundSprite);
 
 	//Drawing game objects
 	if (!waterVector.empty())
@@ -245,6 +304,14 @@ void Game::drawScene()
 		for (int i = 0; i <= herbivoreVector.size() - 1; i++)
 		{
 			gameWindow.draw(herbivoreVector[i].getSprite());
+		}
+	}
+
+	if (!carnivoreVector.empty())
+	{
+		for (int i = 0; i <= carnivoreVector.size() - 1; i++)
+		{
+			gameWindow.draw(carnivoreVector[i].getSprite());
 		}
 	}
 

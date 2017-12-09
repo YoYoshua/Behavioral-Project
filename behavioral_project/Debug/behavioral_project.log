@@ -2,9 +2,10 @@
   Resource.cpp
   Plant.cpp
   ObjectFactory.cpp
-c:\users\admin\documents\github\behavioral-project\behavioral_project\objectfactory.cpp(37): warning C4018: '<=': signed/unsigned mismatch
-c:\users\admin\documents\github\behavioral-project\behavioral_project\objectfactory.cpp(56): warning C4018: '<=': signed/unsigned mismatch
-c:\users\admin\documents\github\behavioral-project\behavioral_project\objectfactory.cpp(75): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\objectfactory.cpp(43): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\objectfactory.cpp(62): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\objectfactory.cpp(81): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\objectfactory.cpp(100): warning C4018: '<=': signed/unsigned mismatch
   main.cpp
   Herbivore.cpp
 c:\users\admin\documents\github\behavioral-project\behavioral_project\herbivore.cpp(47): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
@@ -14,25 +15,33 @@ c:\users\admin\documents\github\behavioral-project\behavioral_project\herbivore.
 c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(27): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
 c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(28): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
 c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(31): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
-c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(92): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(93): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(100): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(101): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(108): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(109): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(135): warning C4018: '<=': signed/unsigned mismatch
-c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(144): warning C4018: '<=': signed/unsigned mismatch
-c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(153): warning C4018: '<=': signed/unsigned mismatch
-c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(172): warning C4018: '<=': signed/unsigned mismatch
-c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(191): warning C4018: '<=': signed/unsigned mismatch
-c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(205): warning C4018: '<=': signed/unsigned mismatch
-c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(229): warning C4018: '<=': signed/unsigned mismatch
-c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(237): warning C4018: '<=': signed/unsigned mismatch
-c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(245): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(117): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(118): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(126): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(127): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(135): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(136): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(162): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(171): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(180): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(189): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(208): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(228): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(247): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(261): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(288): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(296): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(304): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(312): warning C4018: '<=': signed/unsigned mismatch
   Entity.cpp
 c:\users\admin\documents\github\behavioral-project\behavioral_project\entity.cpp(92): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
 c:\users\admin\documents\github\behavioral-project\behavioral_project\entity.cpp(97): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
   Carnivore.cpp
+c:\users\admin\documents\github\behavioral-project\behavioral_project\carnivore.cpp(47): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\carnivore.cpp(48): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\carnivore.cpp(49): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
   Generating Code...
   behavioral_project.vcxproj -> C:\Users\Admin\Documents\GitHub\Behavioral-Project\Debug\behavioral_project.exe
   behavioral_project.vcxproj -> C:\Users\Admin\Documents\GitHub\Behavioral-Project\Debug\behavioral_project.pdb (Full PDB)
