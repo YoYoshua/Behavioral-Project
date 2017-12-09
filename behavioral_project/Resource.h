@@ -19,7 +19,7 @@ private:
 	Vector2f m_Resolution;
 
 	//Constant variables
-	const float DEFAULT_AMOUNT = 200;
+	float DEFAULT_AMOUNT = 200;
 
 public:
 	/*Constructors and Destructor*/
@@ -49,5 +49,6 @@ public:
 
 	/*Friend classes declaration*/
 	friend class Water;
+	friend class Plant;
 };
 

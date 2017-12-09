@@ -1,11 +1,8 @@
 #pragma once
 
 #include <sstream>
-#include <map>
 
 #include "SFML\Graphics.hpp"
-#include "Carnivore.h"
-#include "Herbivore.h"
 #include "ObjectFactory.h"
 
 class Game
@@ -23,19 +20,24 @@ private:
 	/*Video related variables*/
 	Vector2f videoResolution;
 
+	//Object related variables
+	//Herbivore
 	Vector2f herbivorePosition;
 	Texture herbivoreTexture;
 	Sprite herbivoreSprite;
 	std::vector<Herbivore> herbivoreVector;
 
-	int herbivoreTotal = 0;
-
+	//Water
 	Vector2f waterPosition;
 	Texture waterTexture;
 	Sprite waterSprite;
 	std::vector<Water> waterVector;
 
-	int waterTotal = 0;
+	//Plant
+	Vector2f plantPosition;
+	Texture plantTexture;
+	Sprite plantSprite;
+	std::vector<Plant> plantVector;
 
 	/*Text related variables*/
 	Font debugFont;

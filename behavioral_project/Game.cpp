@@ -56,6 +56,14 @@ void Game::initialiseVariables()
 	waterTexture.loadFromFile("graphics/water.png");
 
 	waterSprite.setTexture(waterTexture);
+
+	//Plant
+	plantPosition.x = videoResolution.x / 2;
+	plantPosition.y = videoResolution.y / 2;
+
+	plantTexture.loadFromFile("graphics/plant.png");
+
+	plantSprite.setTexture(plantTexture);
 }
 
 void Game::handleInput()
@@ -80,7 +88,7 @@ void Game::handleInput()
 			//Creating new herbivore objects
 			if (inputEvent.key.code == Keyboard::H)
 			{
-				srand((int)time(0) * dt.asMilliseconds() * 800 * herbivoreVector.size() + 5);
+				srand((int)time(0) * dt.asMilliseconds() + 1 * 800 * herbivoreVector.size() + 5);
 				herbivorePosition.x = rand() % (int)videoResolution.x;
 				herbivorePosition.y = rand() % (int)videoResolution.y;
 				factory.createHerbivore(herbivoreSprite, herbivorePosition, &herbivoreVector, videoResolution);
@@ -88,10 +96,18 @@ void Game::handleInput()
 
 			if (inputEvent.key.code == Keyboard::W)
 			{
-				srand((int)time(0) * dt.asMilliseconds() * 800 * waterVector.size() + 5);
+				srand((int)time(0) * dt.asMilliseconds() + 1 * 900 * waterVector.size() + 5);
 				waterPosition.x = rand() % (int)videoResolution.x;
 				waterPosition.y = rand() % (int)videoResolution.y;
 				factory.createWater(waterSprite, waterPosition, &waterVector, videoResolution);
+			}
+
+			if (inputEvent.key.code == Keyboard::P)
+			{
+				srand((int)time(0) * dt.asMilliseconds() + 1 * 1000 * plantVector.size() + 5);
+				plantPosition.x = rand() % (int)videoResolution.x;
+				plantPosition.y = rand() % (int)videoResolution.y;
+				factory.createPlant(plantSprite, plantPosition, &plantVector, videoResolution);
 			}
 		}
 	}
@@ -130,9 +146,18 @@ void Game::updateScene()
 			waterVector[i].update(dt);
 		}
 	}
+
+	//Updating plant vector
+	if (!plantVector.empty())
+	{
+		for (int i = 0; i <= plantVector.size() - 1; i++)
+		{
+			plantVector[i].update(dt);
+		}
+	}
 	
 	//Cleaning dead objects
-	factory.clean(&herbivoreVector, &waterVector);
+	factory.clean(&herbivoreVector, &waterVector, &plantVector);
 
 	/*DEBUG MODE*/
 
@@ -175,6 +200,20 @@ void Game::updateScene()
 		}
 	}
 
+	if (!plantVector.empty())
+	{
+		for (int i = 0; i <= plantVector.size() - 1; i++)
+		{
+			ssDebugMode << "Water object #" << i << std::endl;
+			ssDebugMode << "Test subject properties:" << std::endl;
+			ssDebugMode << "Position: " << plantVector[i].getPosition().x << ", " << plantVector[i].getPosition().y << std::endl;
+			ssDebugMode << "Scale: " << plantVector[i].getScale() << std::endl;
+			ssDebugMode << std::endl << std::endl;
+			debugText.setString(ssDebugMode.str());
+
+		}
+	}
+
 }
 
 void Game::drawScene()
@@ -190,6 +229,14 @@ void Game::drawScene()
 		for (int i = 0; i <= waterVector.size() - 1; i++)
 		{
 			gameWindow.draw(waterVector[i].getSprite());
+		}
+	}
+
+	if (!plantVector.empty())
+	{
+		for (int i = 0; i <= plantVector.size() - 1; i++)
+		{
+			gameWindow.draw(plantVector[i].getSprite());
 		}
 	}
 

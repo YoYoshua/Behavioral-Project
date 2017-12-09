@@ -23,7 +23,13 @@ void ObjectFactory::createWater(Sprite sprite, Vector2f position, std::vector<Wa
 	vector->push_back(water);
 }
 
-void ObjectFactory::clean(std::vector<Herbivore> *h_vector, std::vector<Water> *w_vector)
+void ObjectFactory::createPlant(Sprite sprite, Vector2f position, std::vector<Plant> *vector, Vector2f resolution)
+{
+	Plant plant(sprite, position, resolution);
+	vector->push_back(plant);
+}
+
+void ObjectFactory::clean(std::vector<Herbivore> *h_vector, std::vector<Water> *w_vector, std::vector<Plant> *p_vector)
 {
 	//Cleaning herbivore vector
 	if (!h_vector->empty() && h_vector->size() != 1)
@@ -60,6 +66,25 @@ void ObjectFactory::clean(std::vector<Herbivore> *h_vector, std::vector<Water> *
 		if ((*w_vector)[0].isEmpty())
 		{
 			w_vector->pop_back();
+		}
+	}
+
+	//Cleaning plant vector
+	if (!p_vector->empty() && p_vector->size() != 1)
+	{
+		for (int i = 0; i <= p_vector->size() - 1; i++)
+		{
+			if ((*p_vector)[i].isEmpty())
+			{
+				p_vector->erase(p_vector->begin() + i);
+			}
+		}
+	}
+	else if (!p_vector->empty() && p_vector->size() == 1)
+	{
+		if ((*p_vector)[0].isEmpty())
+		{
+			p_vector->pop_back();
 		}
 	}
 }

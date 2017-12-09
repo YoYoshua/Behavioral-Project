@@ -1,0 +1,24 @@
+﻿  Water.cpp
+  Resource.cpp
+  ObjectFactory.cpp
+  main.cpp
+  Herbivore.cpp
+c:\users\admin\documents\github\behavioral-project\behavioral_project\herbivore.cpp(47): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\herbivore.cpp(48): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\herbivore.cpp(49): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  Game.cpp
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(27): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(28): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(31): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(83): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(84): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(85): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(91): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(92): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(93): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  Entity.cpp
+c:\users\admin\documents\github\behavioral-project\behavioral_project\entity.cpp(92): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\entity.cpp(97): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+  Carnivore.cpp
+  Generating Code...
+sfml-graphics-d.lib(sfml-graphics-d-2.dll) : fatal error LNK1112: module machine type 'X86' conflicts with target machine type 'x64'
