@@ -4,6 +4,10 @@
   ObjectLogic.cpp
 c:\users\admin\documents\github\behavioral-project\behavioral_project\objectlogic.cpp(29): warning C4018: '<=': signed/unsigned mismatch
 c:\users\admin\documents\github\behavioral-project\behavioral_project\objectlogic.cpp(32): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\objectlogic.cpp(79): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\objectlogic.cpp(82): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\objectlogic.cpp(129): warning C4018: '<=': signed/unsigned mismatch
+c:\users\admin\documents\github\behavioral-project\behavioral_project\objectlogic.cpp(132): warning C4018: '<=': signed/unsigned mismatch
   ObjectFactory.cpp
 c:\users\admin\documents\github\behavioral-project\behavioral_project\objectfactory.cpp(43): warning C4018: '<=': signed/unsigned mismatch
 c:\users\admin\documents\github\behavioral-project\behavioral_project\objectfactory.cpp(62): warning C4018: '<=': signed/unsigned mismatch
@@ -11,9 +15,9 @@ c:\users\admin\documents\github\behavioral-project\behavioral_project\objectfact
 c:\users\admin\documents\github\behavioral-project\behavioral_project\objectfactory.cpp(100): warning C4018: '<=': signed/unsigned mismatch
   main.cpp
   Herbivore.cpp
-c:\users\admin\documents\github\behavioral-project\behavioral_project\herbivore.cpp(45): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
-c:\users\admin\documents\github\behavioral-project\behavioral_project\herbivore.cpp(46): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\admin\documents\github\behavioral-project\behavioral_project\herbivore.cpp(47): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\herbivore.cpp(47): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\herbivore.cpp(48): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\herbivore.cpp(49): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
   Game.cpp
 c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(27): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
 c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(28): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
@@ -39,8 +43,8 @@ c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(3
 c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(317): warning C4018: '<=': signed/unsigned mismatch
 c:\users\admin\documents\github\behavioral-project\behavioral_project\game.cpp(331): warning C4018: '<=': signed/unsigned mismatch
   Entity.cpp
-c:\users\admin\documents\github\behavioral-project\behavioral_project\entity.cpp(107): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\admin\documents\github\behavioral-project\behavioral_project\entity.cpp(112): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\entity.cpp(109): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\admin\documents\github\behavioral-project\behavioral_project\entity.cpp(114): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
   Carnivore.cpp
 c:\users\admin\documents\github\behavioral-project\behavioral_project\carnivore.cpp(52): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
 c:\users\admin\documents\github\behavioral-project\behavioral_project\carnivore.cpp(53): warning C4244: '=': conversion from 'int' to 'float', possible loss of data

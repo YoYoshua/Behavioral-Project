@@ -11,6 +11,7 @@ class ObjectLogic
 private:
 	Vector2f m_PositionVector;
 	float m_Length;
+	Vector2f m_RelativePosition;
 
 	Resource *m_ClosestResource;
 	float m_ClosestResourceDistance;
@@ -27,7 +28,7 @@ public:
 
 	/*Main logic function*/
 	void processLogic(std::vector<Herbivore> *h_vector, std::vector<Carnivore> *c_vector,
-		std::vector<Water> *w_vector, std::vector<Plant> *p_vector);
+		std::vector<Water> *w_vector, std::vector<Plant> *p_vector, Time dt);
 
 };
 

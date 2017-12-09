@@ -1,7 +1,5 @@
 #include "Herbivore.h"
 
-
-
 Herbivore::Herbivore()
 {
 	m_Position.x = 0;
@@ -26,7 +24,7 @@ void Herbivore::behaviour(Time dt)
 {
 	if (isDrinking())
 	{
-		drinkWater()
+		//drinkWater()
 	}
 	if (isThirsty() && foundWater())
 	{
@@ -54,8 +52,14 @@ void Herbivore::idleBehaviour(Time dt)
 
 void Herbivore::drinkWater(Water *water, Time dt)
 {
-	m_Thirst = m_Thirst + dt.asSeconds() * 4;
+	m_Thirst = m_Thirst - dt.asSeconds() * 4;
 	water->setAmount(water->getAmount() - dt.asSeconds() * 4);
+}
+
+void Herbivore::eatFood(Plant *plant, Time dt)
+{
+	m_Hunger = m_Hunger - dt.asSeconds() * 4;
+	plant->setAmount(plant->getAmount() - dt.asSeconds() * 4);
 }
 
 /*Update function*/

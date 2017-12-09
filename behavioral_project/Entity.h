@@ -1,6 +1,7 @@
 #pragma once
 #include "SFML\Graphics.hpp"
 #include "Water.h"
+#include "Plant.h"
 
 using namespace sf;
 
@@ -105,8 +106,14 @@ public:
 
 	//State
 	bool isHungry();
+	void setIsHungry(bool set);
+
 	bool isThirsty();
+	void setIsThirsty(bool set);
+
 	bool isInDanger();
+	void setIsInDanger(bool set);
+
 	bool isDead();
 
 	bool isDrinking();

@@ -16,6 +16,7 @@ public:
 	void behaviour(Time dt);
 	void idleBehaviour(Time dt);
 	void drinkWater(Water *water, Time dt);
+	void eatFood(Plant *plant, Time dt);
 
 	//Update function
 	void update(Time dt);

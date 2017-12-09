@@ -112,7 +112,6 @@ bool Resource::isEmpty()
 void Resource::updateParameters(Time dt)
 {
 	//Lowering parameters with passing time
-	m_Amount = m_Amount - dt.asSeconds();
 	m_Scale = m_Amount / DEFAULT_AMOUNT;
 
 	//Handling passing the minimal parameters

@@ -190,16 +190,31 @@ bool Entity::isHungry()
 	return m_IsHungry;
 }
 
+void Entity::setIsHungry(bool set)
+{
+	m_IsHungry = set;
+}
+
 //Thirsty
 bool Entity::isThirsty()
 {
 	return m_IsThirsty;
 }
 
+void Entity::setIsThirsty(bool set)
+{
+	m_IsThirsty= set;
+}
+
 //In Danger
 bool Entity::isInDanger()
 {
 	return m_IsInDanger;
+}
+
+void Entity::setIsInDanger(bool set)
+{
+	m_IsInDanger = set;
 }
 
 //Drinking
@@ -260,22 +275,14 @@ void Entity::death()
 
 void Entity::stateChange()
 {
-	if (m_Hunger >= 75)
+	if (m_Hunger >= 50)
 	{
 		m_IsHungry = true;
 	}
-	else
-	{
-		m_IsHungry = false;
-	}
 
-	if (m_Thirst >= 75)
+	if (m_Thirst >= 50)
 	{
 		m_IsThirsty = true;
-	}
-	else
-	{
-		m_IsThirsty = false;
 	}
 
 	//Danger system
@@ -287,7 +294,7 @@ void Entity::updateParameters(Time dt)
 {
 	//Lowering parameters with passing time
 	m_Hunger = m_Hunger + dt.asSeconds();
-	m_Thirst = m_Thirst + dt.asSeconds();
+	m_Thirst = m_Thirst + dt.asSeconds() / 2;
 
 	//Updating speed parameter according to hunger and thirst
 	m_Speed = DEFAULT_SPEED - ((int)m_Hunger - 50) - ((int)m_Thirst - 50);
