@@ -16,8 +16,14 @@ Entity::Entity()
 
 	m_IsHungry = false;
 	m_IsThirsty = false;
-	m_IsInDanger = true;
+
+	m_IsInDanger = false;
+	m_IsHunting = false;
 	m_IsDead = false;
+
+	m_FoundFood = false;
+	m_FoundWater = false;
+	m_FoundDanger = false;
 
 	m_IsDrinking = false;
 
@@ -44,7 +50,9 @@ Entity::Entity(Sprite sprite, Vector2f position, Vector2f resolution)
 
 	m_IsHungry = false;
 	m_IsThirsty = false;
+
 	m_IsInDanger = false;
+	m_IsHunting = false;
 	m_IsDead = false;
 
 	m_FoundFood = false;
@@ -217,6 +225,17 @@ void Entity::setIsInDanger(bool set)
 	m_IsInDanger = set;
 }
 
+//Hunting
+bool Entity::isHunting()
+{
+	return m_IsHunting;
+}
+
+void Entity::setIsHunting(bool set)
+{
+	m_IsHunting = set;
+}
+
 //Drinking
 bool Entity::isDrinking()
 {
@@ -275,12 +294,12 @@ void Entity::death()
 
 void Entity::stateChange()
 {
-	if (m_Hunger >= 50)
+	if (m_Hunger >= 30)
 	{
 		m_IsHungry = true;
 	}
 
-	if (m_Thirst >= 50)
+	if (m_Thirst >= 30)
 	{
 		m_IsThirsty = true;
 	}
@@ -299,14 +318,34 @@ void Entity::updateParameters(Time dt)
 	//Updating speed parameter according to hunger and thirst
 	m_Speed = DEFAULT_SPEED - ((int)m_Hunger - 50) - ((int)m_Thirst - 50);
 
+	//Healing
+	if ((m_Hunger <= 60 || m_Thirst <= 60) && m_Hunger + m_Thirst != 0)
+	{
+		m_Health = m_Health + dt.asSeconds() * (120 / (m_Hunger + m_Thirst));
+	}
+	else if (m_Hunger + m_Thirst == 0)
+	{
+		m_Health = m_Health + dt.asSeconds() * 4;
+	}
+
 	/*Handling passing max parameters*/
 
 	//Passing hunger
 	if (m_Hunger >= MAX_HUNGER)
 	{
 		//Reducing HP
-		m_Health = m_Health - dt.asSeconds();
+		m_Health = m_Health - dt.asSeconds() * 2;
 		m_Hunger = 100;
+	}
+	else if (m_Hunger >= MAX_HUNGER *(3 / 4))
+	{
+		//Reducing HP
+		m_Health = m_Health - dt.asSeconds();
+	}
+
+	if (m_Hunger < 0)
+	{
+		m_Hunger = 0;
 	}
 
 	//Passing thirst
@@ -325,6 +364,11 @@ void Entity::updateParameters(Time dt)
 		}
 	}
 
+	if (m_Thirst < 0)
+	{
+		m_Thirst = 0;
+	}
+
 	//Passing HP points
 	if (m_Health <= 0)
 	{
@@ -332,5 +376,9 @@ void Entity::updateParameters(Time dt)
 
 		//Death event
 		death();
+	}
+	else if (m_Health > 100)
+	{
+		m_Health = 100;
 	}
 }

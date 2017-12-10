@@ -22,19 +22,7 @@ Herbivore::~Herbivore()
 
 void Herbivore::behaviour(Time dt)
 {
-	if (isDrinking())
-	{
-		//drinkWater()
-	}
-	if (isThirsty() && foundWater())
-	{
-		//Handling drinking water
-	}
-	else if (isThirsty() && !foundWater())
-	{
-		idleBehaviour(dt);
-	}
-	else
+	if (!isInDanger())
 	{
 		idleBehaviour(dt);
 	}
@@ -78,6 +66,24 @@ void Herbivore::update(Time dt)
 	behaviour(dt);
 
 	//Updating position according to the m_NextPosition parameter
+	if (m_NextPosition.x >= m_Resolution.x)
+	{
+		m_NextPosition.x = m_Resolution.x;
+	}
+	else if (m_NextPosition.x < 0)
+	{
+		m_NextPosition.x = 0;
+	}
+
+	if (m_NextPosition.y >= m_Resolution.y)
+	{
+		m_NextPosition.y = m_Resolution.y;
+	}
+	else if (m_NextPosition.y < 0)
+	{
+		m_NextPosition.y = 0;
+	}
+
 	if (m_NextPosition != getPosition())
 	{
 		//Below happens normalisation of movement vector

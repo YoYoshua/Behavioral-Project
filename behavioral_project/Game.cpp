@@ -299,7 +299,10 @@ void Game::drawScene()
 		for (int i = 0; i <= waterVector.size() - 1; i++)
 		{
 			gameWindow.draw(waterVector[i].getSprite());
-			//gameWindow.draw(waterVector[i].getCircleShape());
+			if (debugModeActive)
+			{
+				gameWindow.draw(waterVector[i].getCircleShape());
+			}
 		}
 	}
 
@@ -308,7 +311,10 @@ void Game::drawScene()
 		for (int i = 0; i <= plantVector.size() - 1; i++)
 		{
 			gameWindow.draw(plantVector[i].getSprite());
-			//gameWindow.draw(plantVector[i].getCircleShape());
+			if (debugModeActive)
+			{
+				gameWindow.draw(plantVector[i].getCircleShape());
+			}
 		}
 	}
 
@@ -317,7 +323,10 @@ void Game::drawScene()
 		for (int i = 0; i <= herbivoreVector.size() - 1; i++)
 		{
 			gameWindow.draw(herbivoreVector[i].getSprite());
-			//gameWindow.draw(herbivoreVector[i].getCircleShape());
+			if (debugModeActive)
+			{
+				gameWindow.draw(herbivoreVector[i].getCircleShape());
+			}
 
 			if (herbivoreVector[i].isInDanger())
 			{
@@ -331,7 +340,10 @@ void Game::drawScene()
 		for (int i = 0; i <= carnivoreVector.size() - 1; i++)
 		{
 			gameWindow.draw(carnivoreVector[i].getSprite());
-			//gameWindow.draw(carnivoreVector[i].getCircleShape());
+			if (debugModeActive)
+			{
+				gameWindow.draw(carnivoreVector[i].getCircleShape());
+			}
 		}
 	}
 

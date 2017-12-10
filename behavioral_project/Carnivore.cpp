@@ -24,23 +24,8 @@ Carnivore::~Carnivore()
 
 void Carnivore::behaviour(Time dt)
 {
-	if (isInDanger())
+	if (!isHunting())
 	{
-		idleBehaviour(dt);
-	}
-	else if (isThirsty() && !isInDanger())
-	{
-		//TO DO
-		idleBehaviour(dt);
-	}
-	else if (isHungry() && !isInDanger())
-	{
-		//TO DO
-		idleBehaviour(dt);
-	}
-	else
-	{
-		//TO DO
 		idleBehaviour(dt);
 	}
 }
@@ -53,6 +38,18 @@ void Carnivore::idleBehaviour(Time dt)
 		m_NextPosition.x = rand() % (int)m_Resolution.x;
 		m_NextPosition.y = rand() % (int)m_Resolution.y;
 	}
+}
+
+void Carnivore::drinkWater(Water *water, Time dt)
+{
+	m_Thirst = m_Thirst - dt.asSeconds() * 4;
+	water->setAmount(water->getAmount() - dt.asSeconds() * 4);
+}
+
+void Carnivore::eatFood(Herbivore *herbivore, Time dt)
+{
+	m_Hunger = m_Hunger - dt.asSeconds() * 4;
+	herbivore->setHealth(herbivore->getHealth() - dt.asSeconds() * 2);
 }
 
 /*Update function*/
@@ -71,6 +68,15 @@ void Carnivore::update(Time dt)
 	behaviour(dt);
 
 	//Updating position according to the m_NextPosition parameter
+	if (m_NextPosition.x >= m_Resolution.x)
+	{
+		m_NextPosition.x = m_Resolution.x;
+	}
+	if (m_NextPosition.y >= m_Resolution.y)
+	{
+		m_NextPosition.y = m_Resolution.y;
+	}
+
 	if (m_NextPosition != getPosition())
 	{
 		//Below happens normalisation of movement vector

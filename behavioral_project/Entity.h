@@ -37,7 +37,10 @@ private:
 	//States
 	bool m_IsHungry;
 	bool m_IsThirsty;
+
 	bool m_IsInDanger;
+	bool m_IsHunting;
+
 	bool m_IsDead;
 
 	bool m_IsDrinking;
@@ -113,6 +116,9 @@ public:
 
 	bool isInDanger();
 	void setIsInDanger(bool set);
+
+	bool isHunting();
+	void setIsHunting(bool set);
 
 	bool isDead();
 
