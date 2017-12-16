@@ -48,8 +48,8 @@ void Carnivore::drinkWater(Water *water, Time dt)
 
 void Carnivore::eatFood(Herbivore *herbivore, Time dt)
 {
-	m_Hunger = m_Hunger - dt.asSeconds() * 4;
-	herbivore->setHealth(herbivore->getHealth() - dt.asSeconds() * 2);
+	m_Hunger = m_Hunger - dt.asSeconds() * 8;
+	herbivore->setHealth(herbivore->getHealth() - dt.asSeconds() * 8);
 }
 
 /*Update function*/

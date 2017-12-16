@@ -66,22 +66,16 @@ void Herbivore::update(Time dt)
 	behaviour(dt);
 
 	//Updating position according to the m_NextPosition parameter
-	if (m_NextPosition.x >= m_Resolution.x)
+	if (m_NextPosition.x >= m_Resolution.x || m_NextPosition.x < 0)
 	{
-		m_NextPosition.x = m_Resolution.x;
-	}
-	else if (m_NextPosition.x < 0)
-	{
-		m_NextPosition.x = 0;
+		srand(m_InternalClock * 1000 * dt.asMicroseconds());
+		m_NextPosition.x = rand() % (int)m_Resolution.x;
 	}
 
-	if (m_NextPosition.y >= m_Resolution.y)
+	if (m_NextPosition.y >= m_Resolution.y || m_NextPosition.y < 0)
 	{
-		m_NextPosition.y = m_Resolution.y;
-	}
-	else if (m_NextPosition.y < 0)
-	{
-		m_NextPosition.y = 0;
+		srand(m_InternalClock * 1000 * dt.asMicroseconds());
+		m_NextPosition.y = rand() % (int)m_Resolution.y;
 	}
 
 	if (m_NextPosition != getPosition())

@@ -19,6 +19,11 @@ private:
 	Entity *m_ClosestEntity;
 	float m_ClosestEntityDistance;
 
+	unsigned int m_cVectorSize;
+	unsigned int m_hVectorSize;
+	unsigned int m_wVectorSize;
+	unsigned int m_pVectorSize;
+
 public:
 	ObjectLogic();
 	~ObjectLogic();

@@ -57,6 +57,7 @@ private:
 	/*Text related variables*/
 	Font debugFont;
 	Text debugText;
+	Text fpsText;
 
 	/*Event and clock related variables*/
 	Event inputEvent;
@@ -66,6 +67,12 @@ private:
 	/*Various objects*/
 	ObjectFactory factory;
 	ObjectLogic logic;
+
+	//Vector size variable
+	unsigned int hVectorSize;
+	unsigned int cVectorSize;
+	unsigned int wVectorSize;
+	unsigned int pVectorSize;
 
 public:
 	RenderWindow gameWindow;

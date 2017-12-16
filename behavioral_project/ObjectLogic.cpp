@@ -21,16 +21,22 @@ float ObjectLogic::getLength()
 void ObjectLogic::processLogic(std::vector<Herbivore> *h_vector, std::vector<Carnivore> *c_vector,
 	std::vector<Water> *w_vector, std::vector<Plant> *p_vector, Time dt)
 {
+	//Getting sizes of every vector
+	m_cVectorSize = c_vector->size();
+	m_hVectorSize = h_vector->size();
+	m_wVectorSize = w_vector->size();
+	m_pVectorSize = p_vector->size();
+
 	/*HERBIVORE LOGIC*/
 	//Checking collision herbivore <-> water
 	if (!h_vector->empty() && !w_vector->empty())
 	{
 		bool m_Flag;
 		m_ClosestResourceDistance = 4000;
-		for (int i = 0; i <= h_vector->size() - 1; i++)
+		for (int i = 0; i <= m_hVectorSize - 1; i++)
 		{
 			m_Flag = false;
-			for (int j = 0; j <= w_vector->size() - 1; j++)
+			for (int j = 0; j <= m_wVectorSize - 1; j++)
 			{
 				m_PositionVector.x = (*h_vector)[i].getPosition().x - (*w_vector)[j].getPosition().x;
 				m_PositionVector.y = (*h_vector)[i].getPosition().y - (*w_vector)[j].getPosition().y;
@@ -77,10 +83,10 @@ void ObjectLogic::processLogic(std::vector<Herbivore> *h_vector, std::vector<Car
 	{
 		bool m_Flag;
 		m_ClosestResourceDistance = 4000;
-		for (int i = 0; i <= h_vector->size() - 1; i++)
+		for (int i = 0; i <= m_hVectorSize - 1; i++)
 		{
 			m_Flag = false;
-			for (int j = 0; j <= p_vector->size() - 1; j++)
+			for (int j = 0; j <= m_pVectorSize - 1; j++)
 			{
 				m_PositionVector.x = (*h_vector)[i].getPosition().x - (*p_vector)[j].getPosition().x;
 				m_PositionVector.y = (*h_vector)[i].getPosition().y - (*p_vector)[j].getPosition().y;
@@ -127,10 +133,10 @@ void ObjectLogic::processLogic(std::vector<Herbivore> *h_vector, std::vector<Car
 	{
 		bool m_Flag;
 		m_ClosestEntityDistance = 4000;
-		for (int i = 0; i <= h_vector->size() - 1; i++)
+		for (int i = 0; i <= m_hVectorSize - 1; i++)
 		{
 			m_Flag = false;
-			for (int j = 0; j <= c_vector->size() - 1; j++)
+			for (int j = 0; j <= m_cVectorSize - 1; j++)
 			{
 				m_PositionVector.x = (*h_vector)[i].getPosition().x - (*c_vector)[j].getPosition().x;
 				m_PositionVector.y = (*h_vector)[i].getPosition().y - (*c_vector)[j].getPosition().y;
@@ -167,22 +173,22 @@ void ObjectLogic::processLogic(std::vector<Herbivore> *h_vector, std::vector<Car
 	}
 	else if (!h_vector->empty() && c_vector->empty())
 	{
-		for (int i = 0; i <= h_vector->size() - 1; i++)
+		for (int i = 0; i <= m_hVectorSize - 1; i++)
 		{
 			(*h_vector)[i].setIsInDanger(false);
 		}
 	}
 
 	/*CARNIVORE LOGIC*/
-	//Checking collision herbivore <-> water
+	//Checking collision carnivore <-> water
 	if (!c_vector->empty() && !w_vector->empty())
 	{
 		bool m_Flag;
 		m_ClosestResourceDistance = 4000;
-		for (int i = 0; i <= c_vector->size() - 1; i++)
+		for (int i = 0; i <= m_cVectorSize - 1; i++)
 		{
 			m_Flag = false;
-			for (int j = 0; j <= w_vector->size() - 1; j++)
+			for (int j = 0; j <= m_wVectorSize - 1; j++)
 			{
 				m_PositionVector.x = (*c_vector)[i].getPosition().x - (*w_vector)[j].getPosition().x;
 				m_PositionVector.y = (*c_vector)[i].getPosition().y - (*w_vector)[j].getPosition().y;
@@ -229,10 +235,10 @@ void ObjectLogic::processLogic(std::vector<Herbivore> *h_vector, std::vector<Car
 	{
 		bool m_Flag;
 		m_ClosestEntityDistance = 4000;
-		for (int i = 0; i <= c_vector->size() - 1; i++)
+		for (int i = 0; i <= m_cVectorSize - 1; i++)
 		{
 			m_Flag = false;
-			for (int j = 0; j <= h_vector->size() - 1; j++)
+			for (int j = 0; j <= m_hVectorSize - 1; j++)
 			{
 				m_PositionVector.x = (*c_vector)[i].getPosition().x - (*h_vector)[j].getPosition().x;
 				m_PositionVector.y = (*c_vector)[i].getPosition().y - (*h_vector)[j].getPosition().y;

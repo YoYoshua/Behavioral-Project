@@ -9,6 +9,12 @@
 
 class ObjectFactory
 {
+private:
+	unsigned int m_cVectorSize;
+	unsigned int m_hVectorSize;
+	unsigned int m_wVectorSize;
+	unsigned int m_pVectorSize;
+
 public:
 	ObjectFactory();
 	~ObjectFactory();

@@ -37,18 +37,29 @@ void ObjectFactory::createPlant(Sprite sprite, Vector2f position, std::vector<Pl
 
 void ObjectFactory::clean(std::vector<Herbivore> *h_vector, std::vector<Carnivore> *c_vector, std::vector<Water> *w_vector, std::vector<Plant> *p_vector)
 {
+	//Getting sizes of every vector
+	m_cVectorSize = c_vector->size();
+	m_hVectorSize = h_vector->size();
+	m_wVectorSize = w_vector->size();
+	m_pVectorSize = p_vector->size();
+
 	//Cleaning herbivore vector
-	if (!h_vector->empty() && h_vector->size() != 1)
+	if (!h_vector->empty() && m_hVectorSize != 1)
 	{
-		for (int i = 0; i <= h_vector->size() - 1; i++)
+		for (std::vector<Herbivore>::iterator it = h_vector->begin(); it != h_vector->end(); ++it)
 		{
-			if ((*h_vector)[i].isDead())
+			if ((*it).isDead())
 			{
-				h_vector->erase(h_vector->begin() + i);
+				it = h_vector->erase(it);
+			}
+
+			if (it == h_vector->end())
+			{
+				--it;
 			}
 		}
 	}
-	else if (!h_vector->empty() && h_vector->size() == 1)
+	else if (!h_vector->empty() && m_hVectorSize == 1)
 	{
 		if ((*h_vector)[0].isDead())
 		{
@@ -57,17 +68,22 @@ void ObjectFactory::clean(std::vector<Herbivore> *h_vector, std::vector<Carnivor
 	}
 
 	//Cleaning carnivore vector
-	if (!c_vector->empty() && c_vector->size() != 1)
+	if (!c_vector->empty() && m_cVectorSize != 1)
 	{
-		for (int i = 0; i <= c_vector->size() - 1; i++)
+		for (std::vector<Carnivore>::iterator it = c_vector->begin(); it != c_vector->end(); ++it)
 		{
-			if ((*c_vector)[i].isDead())
+			if ((*it).isDead())
 			{
-				c_vector->erase(c_vector->begin() + i);
+				it = c_vector->erase(it);
+			}
+
+			if (it == c_vector->end())
+			{
+				--it;
 			}
 		}
 	}
-	else if (!c_vector->empty() && c_vector->size() == 1)
+	else if (!c_vector->empty() && m_cVectorSize == 1)
 	{
 		if ((*c_vector)[0].isDead())
 		{
@@ -76,17 +92,22 @@ void ObjectFactory::clean(std::vector<Herbivore> *h_vector, std::vector<Carnivor
 	}
 
 	//Cleaning water vector
-	if (!w_vector->empty() && w_vector->size() != 1)
+	if (!w_vector->empty() && m_wVectorSize != 1)
 	{
-		for (int i = 0; i <= w_vector->size() - 1; i++)
+		for (std::vector<Water>::iterator it = w_vector->begin(); it != w_vector->end(); ++it)
 		{
-			if ((*w_vector)[i].isEmpty())
+			if ((*it).isEmpty())
 			{
-				w_vector->erase(w_vector->begin() + i);
+				it = w_vector->erase(it);
+			}
+
+			if (it == w_vector->end())
+			{
+				--it;
 			}
 		}
 	}
-	else if (!w_vector->empty() && w_vector->size() == 1)
+	else if (!w_vector->empty() && m_wVectorSize == 1)
 	{
 		if ((*w_vector)[0].isEmpty())
 		{
@@ -95,17 +116,22 @@ void ObjectFactory::clean(std::vector<Herbivore> *h_vector, std::vector<Carnivor
 	}
 
 	//Cleaning plant vector
-	if (!p_vector->empty() && p_vector->size() != 1)
+	if (!p_vector->empty() && m_pVectorSize != 1)
 	{
-		for (int i = 0; i <= p_vector->size() - 1; i++)
+		for (std::vector<Plant>::iterator it = p_vector->begin(); it != p_vector->end(); ++it)
 		{
-			if ((*p_vector)[i].isEmpty())
+			if ((*it).isEmpty())
 			{
-				p_vector->erase(p_vector->begin() + i);
+				it = p_vector->erase(it);
+			}
+
+			if (it == p_vector->end())
+			{
+				--it;
 			}
 		}
 	}
-	else if (!p_vector->empty() && p_vector->size() == 1)
+	else if (!p_vector->empty() && m_pVectorSize == 1)
 	{
 		if ((*p_vector)[0].isEmpty())
 		{
