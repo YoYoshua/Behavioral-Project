@@ -6,9 +6,9 @@ class Carnivore :
 	public Entity
 {
 public:
-	using Entity::Entity;
-
+	/*Constructors and Destructor*/
 	Carnivore();
+	Carnivore(Sprite sprite, Vector2f position, Vector2f resolution);
 	~Carnivore();
 
 	/*Behavioral functions*/
@@ -18,6 +18,6 @@ public:
 	void eatFood(Herbivore *herbivore, Time dt);
 
 	//Update function
-	void update(Time dt);
+	virtual void update(Time dt);
 };
 

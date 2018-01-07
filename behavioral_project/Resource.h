@@ -56,6 +56,7 @@ public:
 
 	/*Updating functions*/
 	void updateParameters(Time dt);
+	void update(Time dt);
 
 	/*Friend classes declaration*/
 	friend class Water;

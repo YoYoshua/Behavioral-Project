@@ -34,6 +34,10 @@ private:
 
 	Vector2f m_Resolution;
 
+	//Entity type
+	enum class EntityType { UNSPECIFIED, HERBIVORE, CARNIVORE };
+	EntityType m_Type;
+
 	//States
 	bool m_IsHungry;
 	bool m_IsThirsty;
@@ -66,6 +70,8 @@ public:
 	~Entity();
 
 	/*Getters and Setters*/
+	//Type
+	String getType();
 
 	//Health
 	void setHealth(float health);
@@ -140,6 +146,7 @@ public:
 
 	/*Update function*/
 	void updateParameters(Time dt);
+	virtual void update(Time dt);
 
 	/*Friend classes declaration*/
 	friend class Herbivore;

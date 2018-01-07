@@ -15,6 +15,45 @@ Carnivore::Carnivore()
 	m_InternalClock = 0;
 }
 
+Carnivore::Carnivore(Sprite sprite, Vector2f position, Vector2f resolution)
+{
+	m_Position = position;
+	m_NextPosition = m_Position;
+
+	m_Type = EntityType::CARNIVORE;
+
+	m_Sprite = sprite;
+	m_Sprite.setOrigin(10, 10);
+	m_Sprite.setPosition(m_Position);
+	m_Boundaries = m_Sprite.getGlobalBounds();
+
+	m_Health = 100.0f;
+	m_Hunger = 50.0f;
+	m_Thirst = 50.0f;
+	m_Speed = 150;
+
+	m_IsHungry = false;
+	m_IsThirsty = false;
+
+	m_IsInDanger = false;
+	m_IsHunting = false;
+	m_IsDead = false;
+
+	m_FoundFood = false;
+	m_FoundWater = false;
+	m_FoundDanger = false;
+
+	m_Resolution = resolution;
+
+	m_InternalClock = 0;
+
+	m_VisionCircle.setRadius(150);
+	m_VisionCircle.setOrigin(150, 150);
+	m_VisionCircle.setPosition(m_Position);
+	m_VisionCircle.setOutlineColor(Color::Black);
+	m_VisionCircle.setOutlineThickness(1);
+	m_VisionCircle.setFillColor(Color::Transparent);
+}
 
 Carnivore::~Carnivore()
 {

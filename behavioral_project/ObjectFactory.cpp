@@ -1,6 +1,6 @@
 #include "ObjectFactory.h"
 #include <iostream>
-
+#include <memory>
 
 
 ObjectFactory::ObjectFactory()
@@ -11,28 +11,28 @@ ObjectFactory::~ObjectFactory()
 {
 }
 
-void ObjectFactory::createHerbivore(Sprite sprite, Vector2f position, std::vector<Herbivore> *vector, Vector2f resolution)
+std::shared_ptr<Entity> ObjectFactory::createHerbivore(Sprite sprite, Vector2f position)
 {
-	Herbivore herbivore(sprite, position, resolution);
-	vector->push_back(herbivore);
+	std::shared_ptr<Entity> ptr(std::make_shared<Herbivore>(sprite, position, m_GameResolution));
+	return ptr;
 }
 
-void ObjectFactory::createCarnivore(Sprite sprite, Vector2f position, std::vector<Carnivore> *vector, Vector2f resolution)
+std::shared_ptr<Entity> ObjectFactory::createCarnivore(Sprite sprite, Vector2f position)
 {
-	Carnivore carnivore(sprite, position, resolution);
-	vector->push_back(carnivore);
+	std::shared_ptr<Entity> ptr(std::make_shared<Carnivore>(sprite, position, m_GameResolution));
+	return ptr;
 }
 
-void ObjectFactory::createWater(Sprite sprite, Vector2f position, std::vector<Water> *vector, Vector2f resolution)
+std::shared_ptr<Resource> ObjectFactory::createWater(Sprite sprite, Vector2f position)
 {
-	Water water(sprite, position, resolution);
-	vector->push_back(water);
+	std::shared_ptr<Resource> ptr(std::make_shared<Water>(sprite, position, m_GameResolution));
+	return ptr;
 }
 
-void ObjectFactory::createPlant(Sprite sprite, Vector2f position, std::vector<Plant> *vector, Vector2f resolution)
+std::shared_ptr<Resource> ObjectFactory::createPlant(Sprite sprite, Vector2f position)
 {
-	Plant plant(sprite, position, resolution);
-	vector->push_back(plant);
+	std::shared_ptr<Resource> ptr(std::make_shared<Resource>(sprite, position, m_GameResolution));
+	return ptr;
 }
 
 void ObjectFactory::clean(std::vector<Herbivore> *h_vector, std::vector<Carnivore> *c_vector, std::vector<Water> *w_vector, std::vector<Plant> *p_vector)
@@ -138,4 +138,38 @@ void ObjectFactory::clean(std::vector<Herbivore> *h_vector, std::vector<Carnivor
 			p_vector->pop_back();
 		}
 	}
+}
+
+void ObjectFactory::clean(std::vector<std::shared_ptr<Entity>>& entityVector, std::vector<std::shared_ptr<Resource>>& resourceVector)
+{
+	unsigned int eVectorSize = entityVector.size();
+	unsigned int rVectorSize = resourceVector.size();
+
+	if (!entityVector.empty() && eVectorSize != 1)
+	{
+		for (std::vector<std::shared_ptr<Entity >>::iterator it = entityVector.begin(); it != entityVector.end(); ++it)
+		{
+			if ((*it)->isDead())
+			{
+				it = entityVector.erase(it);
+			}
+			if (it == entityVector.end())
+			{
+				--it;
+			}
+		}
+	}
+	else if (!entityVector.empty() && eVectorSize == 1)
+	{
+		if (entityVector[0]->isDead())
+		{
+			entityVector.pop_back();
+		}
+	}
+	
+}
+
+void ObjectFactory::setResolution(Vector2f resolution)
+{
+	m_GameResolution = resolution;
 }

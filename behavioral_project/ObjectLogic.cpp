@@ -22,10 +22,10 @@ void ObjectLogic::processLogic(std::vector<Herbivore> *h_vector, std::vector<Car
 	std::vector<Water> *w_vector, std::vector<Plant> *p_vector, Time dt)
 {
 	//Getting sizes of every vector
-	m_cVectorSize = c_vector->size();
-	m_hVectorSize = h_vector->size();
-	m_wVectorSize = w_vector->size();
-	m_pVectorSize = p_vector->size();
+	unsigned int m_cVectorSize = c_vector->size();
+	unsigned int m_hVectorSize = h_vector->size();
+	unsigned int m_wVectorSize = w_vector->size();
+	unsigned int m_pVectorSize = p_vector->size();
 
 	/*HERBIVORE LOGIC*/
 	//Checking collision herbivore <-> water
@@ -278,5 +278,50 @@ void ObjectLogic::processLogic(std::vector<Herbivore> *h_vector, std::vector<Car
 				(*c_vector)[i].setNextPosition(m_ClosestEntity->getPosition());
 			}
 		}
+	}
+}
+
+void ObjectLogic::processLogic(std::vector<std::shared_ptr<Entity>> &entityVector, std::vector<std::shared_ptr<Resource>> &resourceVector)
+{
+	if (!entityVector.empty())
+	{
+		for (auto p : entityVector)
+		{
+			//Check collisions with another entities
+			for (auto m : entityVector)
+			{
+				//Calculate lenght between two entites
+				m_PositionVector.x = p->getPosition().x - m->getPosition().x;
+				m_PositionVector.y = p->getPosition().y - m->getPosition().y;
+				m_Length = sqrt(m_PositionVector.x * m_PositionVector.x + m_PositionVector.y * m_PositionVector.y);
+				if (p->getCircleShape().getRadius() >= m_Length)
+				{
+					interact(p, m);
+				}
+			}
+		}
+	}
+}
+
+void ObjectLogic::interact(std::shared_ptr<Entity> entityOne, std::shared_ptr<Entity> entityTwo)
+{
+	if (entityOne->getType() != entityTwo->getType())
+	{
+		if (entityOne->getType() == "HERBIVORE")
+		{
+			entityOne->setIsInDanger(true);
+
+			entityTwo->setIsHunting(true);
+		}
+		else
+		{
+			entityOne->setIsHunting(true);
+
+			entityTwo->setIsInDanger(true);
+		}
+	}
+	else
+	{
+		//TODO: Reproduction mechanic
 	}
 }

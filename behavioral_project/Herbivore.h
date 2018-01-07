@@ -5,11 +5,9 @@ class Herbivore :
 	public Entity
 {
 public:
-	//Declaration of inheritance of constructor
-	using Entity::Entity;
-
 	//Constructors and Destructor
 	Herbivore();
+	Herbivore(Sprite sprite, Vector2f position, Vector2f resolution);
 	~Herbivore();
 
 	/*Behavioral functions*/
@@ -19,6 +17,6 @@ public:
 	void eatFood(Plant *plant, Time dt);
 
 	//Update function
-	void update(Time dt);
+	virtual void update(Time dt);
 };
 

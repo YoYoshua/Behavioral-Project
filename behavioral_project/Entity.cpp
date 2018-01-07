@@ -38,6 +38,8 @@ Entity::Entity(Sprite sprite, Vector2f position, Vector2f resolution)
 	m_Position = position;
 	m_NextPosition = m_Position;
 
+	m_Type = EntityType::UNSPECIFIED;
+
 	m_Sprite = sprite;
 	m_Sprite.setOrigin(10, 10);
 	m_Sprite.setPosition(m_Position);
@@ -77,6 +79,24 @@ Entity::~Entity()
 }
 
 /*Getters and Setters*/
+
+String Entity::getType()
+{
+	switch (m_Type)
+	{
+		case EntityType::UNSPECIFIED:
+			return "UNSPECIFIED";
+
+		case EntityType::CARNIVORE:
+			return "CARNIVORE";
+			
+		case EntityType::HERBIVORE:
+			return "HERBIVORE";
+
+		default:
+			return "UNSPECIFIED";
+	}
+}
 
 //Health
 void Entity::setHealth(float health)
@@ -381,4 +401,8 @@ void Entity::updateParameters(Time dt)
 	{
 		m_Health = 100;
 	}
+}
+
+void Entity::update(Time dt)
+{
 }

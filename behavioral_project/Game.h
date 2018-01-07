@@ -1,5 +1,6 @@
 #pragma once
 #include <sstream>
+#include <memory>
 
 #include "SFML\Graphics.hpp"
 #include "ObjectFactory.h"
@@ -50,6 +51,10 @@ private:
 	Sprite plantSprite;
 	std::vector<Plant> plantVector;
 
+	//Vectors
+	std::vector<std::shared_ptr<Entity> > entityVector;
+	std::vector<std::shared_ptr<Resource>> resourceVector;
+
 	//Various textures
 	Texture dangerTexture;
 	Sprite dangerSprite;
@@ -69,10 +74,8 @@ private:
 	ObjectLogic logic;
 
 	//Vector size variable
-	unsigned int hVectorSize;
-	unsigned int cVectorSize;
-	unsigned int wVectorSize;
-	unsigned int pVectorSize;
+	unsigned int eVectorSize;
+	unsigned int rVectorSize;
 
 public:
 	RenderWindow gameWindow;

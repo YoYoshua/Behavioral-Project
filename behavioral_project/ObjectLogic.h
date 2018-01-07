@@ -1,5 +1,7 @@
 #pragma once
 
+#include<memory>
+
 #include "SFML\Graphics.hpp"
 #include "Herbivore.h"
 #include "Carnivore.h"
@@ -19,11 +21,6 @@ private:
 	Entity *m_ClosestEntity;
 	float m_ClosestEntityDistance;
 
-	unsigned int m_cVectorSize;
-	unsigned int m_hVectorSize;
-	unsigned int m_wVectorSize;
-	unsigned int m_pVectorSize;
-
 public:
 	ObjectLogic();
 	~ObjectLogic();
@@ -34,6 +31,9 @@ public:
 	/*Main logic function*/
 	void processLogic(std::vector<Herbivore> *h_vector, std::vector<Carnivore> *c_vector,
 		std::vector<Water> *w_vector, std::vector<Plant> *p_vector, Time dt);
+
+	void processLogic(std::vector<std::shared_ptr<Entity>> &entityVector, std::vector<std::shared_ptr<Resource>> &resourceVector);
+	void interact(std::shared_ptr<Entity> entityOne, std::shared_ptr<Entity> entityTwo);
 
 };
 

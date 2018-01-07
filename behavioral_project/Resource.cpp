@@ -121,3 +121,7 @@ void Resource::updateParameters(Time dt)
 		m_Amount = 0;
 	}
 }
+
+void Resource::update(Time dt)
+{
+}
