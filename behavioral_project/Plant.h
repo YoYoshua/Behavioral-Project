@@ -4,10 +4,7 @@ class Plant :
 	public Resource
 {
 public:
-	//Declaration of inheritance of constructor
-	using Resource::Resource;
-
-	Plant();
+	Plant(Sprite sprite, Vector2f position, Vector2f resolution);
 	~Plant();
 
 	void update(Time dt);

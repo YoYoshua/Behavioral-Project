@@ -2,6 +2,7 @@
 #include "SFML\Graphics.hpp"
 #include "Water.h"
 #include "Plant.h"
+#include <memory>
 
 using namespace sf;
 
@@ -38,30 +39,48 @@ private:
 	enum class EntityType { UNSPECIFIED, HERBIVORE, CARNIVORE };
 	EntityType m_Type;
 
-	//States
+	//Entity direction
+	enum class EntityDirection { LEFT, RIGHT };
+	EntityDirection m_Direction;
+
+	//Internal states
 	bool m_IsHungry;
 	bool m_IsThirsty;
 
+	bool m_FoundWater;
+	bool m_FoundFood;
+	bool m_FoundDanger;
+
+	//External states
 	bool m_IsInDanger;
 	bool m_IsHunting;
 
 	bool m_IsDead;
 
 	bool m_IsDrinking;
+	bool m_IsEating;
 
-	bool m_FoundWater;
-	bool m_FoundFood;
-	bool m_FoundDanger;
+	//Abstract states
+	bool m_IsFlipped;
 
 	//Entity clock
 	float m_InternalClock;
 	float m_Timer;
+	float m_IdleCooldown;
 
 	//Visual sprites
 	Sprite m_DangerSprite;
 
 	//Vision circle
 	CircleShape m_VisionCircle;
+
+	//Closest entities and resources
+	std::shared_ptr<Resource> m_ClosestWater;
+	std::shared_ptr<Resource> m_ClosestFood;
+
+	std::shared_ptr<Entity> m_ClosestEntity;
+	std::shared_ptr<Entity> m_ClosestDanger;
+	std::shared_ptr<Entity> m_ClosestPrey;
 
 public:
 	/*Constructors and Destructor*/
@@ -140,13 +159,44 @@ public:
 	void setFoundWater(bool set);
 	void setFoundDanger(bool set);
 
+	void setClosestEntity(std::shared_ptr<Entity> entity);
+	std::shared_ptr<Entity> getClosestEntity();
+
+	void setClosestDanger(std::shared_ptr<Entity> danger);
+	std::shared_ptr<Entity> getClosestDanger();
+
+	void setClosestPrey(std::shared_ptr<Entity> prey);
+	std::shared_ptr<Entity> getClosestPrey();
+
+	void setClosestWater(std::shared_ptr<Resource> water);
+	std::shared_ptr<Resource> getClosestWater();
+
+	void setClosestFood(std::shared_ptr<Resource> food);
+	std::shared_ptr<Resource> getClosestFood();
+
 	/*Events*/
 	void death();
 	void stateChange();
 
+	/*Behavioural functions*/
+	void behaviour(Time dt);
+
+	//Various behaviour
+	void idle(Time dt);
+	void inDanger(Time dt);
+	void thirsty(Time dt);
+	void hungry(Time dt);
+	void reproduce(Time dt);
+	void hunt(Time dt);
+	void attack(Time dt, std::shared_ptr<Entity> prey);
+
+	//Consumption methods
+	void eat(Time dt, std::shared_ptr<Resource> food);
+	void drink(Time dt, std::shared_ptr<Resource> water);
+
 	/*Update function*/
 	void updateParameters(Time dt);
-	virtual void update(Time dt);
+	void update(Time dt);
 
 	/*Friend classes declaration*/
 	friend class Herbivore;

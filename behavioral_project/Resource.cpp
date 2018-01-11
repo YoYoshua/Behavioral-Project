@@ -22,7 +22,7 @@ Resource::Resource(Sprite sprite, Vector2f position, Vector2f resolution)
 	m_Position = position;
 
 	m_Sprite = sprite;
-	m_Sprite.setOrigin(100, 100);
+	m_Sprite.setOrigin(m_Sprite.getLocalBounds().width / 2, m_Sprite.getLocalBounds().height / 2);
 	m_Sprite.setPosition(m_Position);
 	m_Boundaries = m_Sprite.getGlobalBounds();
 	m_Amount = DEFAULT_AMOUNT;
@@ -32,6 +32,8 @@ Resource::Resource(Sprite sprite, Vector2f position, Vector2f resolution)
 	m_Scale = m_Amount / DEFAULT_AMOUNT;
 
 	m_IsEmpty = false;
+
+	m_ResourceType = ResourceType::UNDEFINED;
 
 	m_VisionCircle.setRadius(50);
 	m_VisionCircle.setOrigin(50, 50);
@@ -106,6 +108,24 @@ float Resource::getAmount()
 bool Resource::isEmpty()
 {
 	return m_IsEmpty;
+}
+
+std::string Resource::getType()
+{
+	switch (m_ResourceType)
+	{
+		case ResourceType::MEAT:
+			return "MEAT";
+
+		case ResourceType::PLANT:
+			return "PLANT";
+
+		case ResourceType::WATER:
+			return "WATER";
+
+		default:
+			return "UNDEFINED";
+	}
 }
 
 /*Update functions*/

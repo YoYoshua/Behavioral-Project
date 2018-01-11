@@ -31,25 +31,21 @@ private:
 	Vector2f herbivorePosition;
 	Texture herbivoreTexture;
 	Sprite herbivoreSprite;
-	std::vector<Herbivore> herbivoreVector;
 
 	//Carnivore
 	Vector2f carnivorePosition;
 	Texture carnivoreTexture;
 	Sprite carnivoreSprite;
-	std::vector<Carnivore> carnivoreVector;
 
 	//Water
 	Vector2f waterPosition;
 	Texture waterTexture;
 	Sprite waterSprite;
-	std::vector<Water> waterVector;
 
 	//Plant
 	Vector2f plantPosition;
 	Texture plantTexture;
 	Sprite plantSprite;
-	std::vector<Plant> plantVector;
 
 	//Vectors
 	std::vector<std::shared_ptr<Entity> > entityVector;

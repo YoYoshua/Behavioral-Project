@@ -18,6 +18,10 @@ private:
 	FloatRect m_Boundaries;
 	Vector2f m_Resolution;
 
+	//Resource type
+	enum class ResourceType { UNDEFINED, WATER, PLANT, MEAT };
+	ResourceType m_ResourceType;
+
 	//Constant variables
 	float DEFAULT_AMOUNT = 200;
 
@@ -54,6 +58,9 @@ public:
 	//Emptiness
 	bool isEmpty();
 
+	//Type
+	std::string getType();
+
 	/*Updating functions*/
 	void updateParameters(Time dt);
 	void update(Time dt);
@@ -61,5 +68,6 @@ public:
 	/*Friend classes declaration*/
 	friend class Water;
 	friend class Plant;
+	friend class Meat;
 };
 

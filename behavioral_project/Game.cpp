@@ -51,7 +51,7 @@ void Game::initialiseVariables()
 	herbivorePosition.x = videoResolution.x / 2;
 	herbivorePosition.y = videoResolution.y / 2;
 
-	herbivoreTexture.loadFromFile("graphics/herbivore.png");
+	herbivoreTexture.loadFromFile("graphics/krowka0000.png");
 
 	herbivoreSprite.setTexture(herbivoreTexture);
 
@@ -59,7 +59,7 @@ void Game::initialiseVariables()
 	carnivorePosition.x = videoResolution.x / 2;
 	carnivorePosition.y = videoResolution.y / 2;
 
-	carnivoreTexture.loadFromFile("graphics/carnivore.png");
+	carnivoreTexture.loadFromFile("graphics/lewek0000.png");
 
 	carnivoreSprite.setTexture(carnivoreTexture);
 
@@ -67,7 +67,7 @@ void Game::initialiseVariables()
 	waterPosition.x = videoResolution.x / 2;
 	waterPosition.y = videoResolution.y / 2;
 
-	waterTexture.loadFromFile("graphics/water.png");
+	waterTexture.loadFromFile("graphics/woda0000.png");
 
 	waterSprite.setTexture(waterTexture);
 
@@ -194,7 +194,7 @@ void Game::updateScene()
 	factory.clean(entityVector, resourceVector);
 
 	//Processing object logic
-	logic.processLogic(entityVector, resourceVector);
+	logic.processLogic(dt, entityVector, resourceVector);
 
 	/*DEBUG MODE*/
 
@@ -213,43 +213,13 @@ void Game::updateScene()
 
 	if (debugModeActive)
 	{
-		ssDebugMode << "Entities size:" << eVectorSize << std::endl;
-		ssDebugMode << "Resources size:" << rVectorSize << std::endl;
-
-		if (eVectorSize)
+		ssDebugMode << "Entities:" << eVectorSize << std::endl;
+		for (auto p : entityVector)
 		{
-			for (int i = 0; i <= eVectorSize - 1; i++)
-			{
-				ssDebugMode << "Entity object #" << i << std::endl;
-				ssDebugMode << "Test subject properties:" << std::endl;
-				ssDebugMode << "Health: " << entityVector[i]->getHealth() << std::endl;
-				ssDebugMode << "Hunger: " << (int)entityVector[i]->getHunger() << std::endl;
-				ssDebugMode << "Thirst: " << (int)entityVector[i]->getThirst() << std::endl;
-				ssDebugMode << "Position: " << entityVector[i]->getPosition().x << ", " << entityVector[i]->getPosition().y << std::endl;
-				ssDebugMode << "Next position: " << entityVector[i]->getNextPosition().x << ", " << entityVector[i]->getNextPosition().y << std::endl;
-				ssDebugMode << "Speed: " << entityVector[i]->getSpeed() << std::endl;
-				ssDebugMode << "Circle radius: " << entityVector[i]->getCircleShape().getRadius() << std::endl;
-				ssDebugMode << "Length: " << logic.getLength() << std::endl;
-				ssDebugMode << std::endl << std::endl;
-				debugText.setString(ssDebugMode.str());
-
-			}
+			ssDebugMode << "Position:" << p->getPosition().x << ", " << p->getPosition().y << std::endl;
 		}
 
-		if (rVectorSize)
-		{
-			for (int i = 0; i <= rVectorSize - 1; i++)
-			{
-				ssDebugMode << "Resource object #" << i << std::endl;
-				ssDebugMode << "Test subject properties:" << std::endl;
-				ssDebugMode << "Position: " << resourceVector[i]->getPosition().x << ", " << resourceVector[i]->getPosition().y << std::endl;
-				ssDebugMode << "Scale: " << resourceVector[i]->getScale() << std::endl;
-				ssDebugMode << "Circle radius: " << resourceVector[i]->getCircleShape().getRadius() << std::endl;
-				ssDebugMode << std::endl << std::endl;
-				debugText.setString(ssDebugMode.str());
-
-			}
-		}
+		debugText.setString(ssDebugMode.str());
 	}
 }
 
@@ -297,7 +267,6 @@ void Game::drawScene()
 	if (debugModeActive)
 	{
 		gameWindow.draw(debugText);
-
 	}
 
 	gameWindow.draw(fpsText);

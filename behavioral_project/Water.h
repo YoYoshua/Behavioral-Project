@@ -8,7 +8,7 @@ public:
 	//Declaration of inheritance of constructor
 	using Resource::Resource;
 
-	Water();
+	Water(Sprite sprite, Vector2f position, Vector2f resolution);
 	~Water();
 
 	void update(Time dt);

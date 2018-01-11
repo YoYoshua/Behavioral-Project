@@ -21,6 +21,9 @@ private:
 	Entity *m_ClosestEntity;
 	float m_ClosestEntityDistance;
 
+	std::vector<std::shared_ptr<Entity>> entitiesNoticed;
+	std::vector<std::shared_ptr<Resource>> resourcesNoticed;
+
 public:
 	ObjectLogic();
 	~ObjectLogic();
@@ -28,12 +31,12 @@ public:
 	//Getters
 	float getLength();
 
-	/*Main logic function*/
-	void processLogic(std::vector<Herbivore> *h_vector, std::vector<Carnivore> *c_vector,
-		std::vector<Water> *w_vector, std::vector<Plant> *p_vector, Time dt);
+	/*Main logic method*/
+	void processLogic(Time dt, std::vector<std::shared_ptr<Entity>> &entityVector, std::vector<std::shared_ptr<Resource>> &resourceVector);
 
-	void processLogic(std::vector<std::shared_ptr<Entity>> &entityVector, std::vector<std::shared_ptr<Resource>> &resourceVector);
-	void interact(std::shared_ptr<Entity> entityOne, std::shared_ptr<Entity> entityTwo);
-
+	//Various logic methods
+	void checkEntities(std::shared_ptr<Entity> entity, std::vector<std::shared_ptr<Entity>> &entityVector);
+	void checkResources(std::shared_ptr<Entity> entity, std::vector<std::shared_ptr<Resource>> &resourceVector);
+	void interact(Time dt, std::shared_ptr<Entity> entityOne, std::vector<std::shared_ptr<Entity>> &entitiesNoticed, std::vector<std::shared_ptr<Resource>> &resourcesNoticed);
 };
 
