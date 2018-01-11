@@ -46,7 +46,7 @@ Carnivore::Carnivore(Sprite sprite, Vector2f position, Vector2f resolution)
 	m_Resolution = resolution;
 
 	m_InternalClock = 0;
-	m_IdleCooldown = 0;
+	m_IdleCooldown = 5.f;
 
 	m_VisionCircle.setRadius(250);
 	m_VisionCircle.setOrigin(250, 250);

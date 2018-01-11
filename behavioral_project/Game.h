@@ -47,13 +47,21 @@ private:
 	Texture plantTexture;
 	Sprite plantSprite;
 
+	//Meat
+	Vector2f meatPosition;
+	Texture meatTexture;
+	Sprite meatSprite;
+
 	//Vectors
 	std::vector<std::shared_ptr<Entity> > entityVector;
 	std::vector<std::shared_ptr<Resource>> resourceVector;
 
-	//Various textures
-	Texture dangerTexture;
+	//Needs symbols
+	Texture needsTexture;
 	Sprite dangerSprite;
+	Sprite hungrySprite;
+	Sprite thirstySprite;
+	Sprite matingSprite;
 
 	/*Text related variables*/
 	Font debugFont;

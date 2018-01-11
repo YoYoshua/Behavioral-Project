@@ -31,13 +31,3 @@ Plant::Plant(Sprite sprite, Vector2f position, Vector2f resolution)
 Plant::~Plant()
 {
 }
-
-void Plant::update(Time dt)
-{
-	//Updating parameters
-	updateParameters(dt);
-
-	//Changing object according to parameters
-	m_Sprite.setScale(m_Scale, m_Scale);
-	m_VisionCircle.setScale(m_Scale, m_Scale);
-}

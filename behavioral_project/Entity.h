@@ -66,7 +66,6 @@ private:
 	//Entity clock
 	float m_InternalClock;
 	float m_Timer;
-	float m_IdleCooldown;
 
 	//Visual sprites
 	Sprite m_DangerSprite;
@@ -83,6 +82,9 @@ private:
 	std::shared_ptr<Entity> m_ClosestPrey;
 
 public:
+	float m_IdleCooldown;
+
+public:
 	/*Constructors and Destructor*/
 	 Entity();
 	 Entity(Sprite sprite, Vector2f position, Vector2f resolution);
@@ -90,7 +92,7 @@ public:
 
 	/*Getters and Setters*/
 	//Type
-	String getType();
+	std::string getType();
 
 	//Health
 	void setHealth(float health);

@@ -8,17 +8,14 @@
 #include "Carnivore.h"
 #include "Water.h"
 #include "Plant.h"
+#include "Meat.h"
 
 
 class ObjectFactory
 {
 private:
-	unsigned int m_cVectorSize;
-	unsigned int m_hVectorSize;
-	unsigned int m_wVectorSize;
-	unsigned int m_pVectorSize;
-
 	Vector2f m_GameResolution;
+	Sprite m_MeatSprite;
 
 public:
 	ObjectFactory();
@@ -28,11 +25,11 @@ public:
 	std::shared_ptr<Entity> createCarnivore(Sprite sprite, Vector2f position);
 	std::shared_ptr<Resource> createWater(Sprite sprite, Vector2f position);
 	std::shared_ptr<Resource> createPlant(Sprite sprite, Vector2f position);
+	std::shared_ptr<Resource> createMeat(Sprite sprite, Vector2f position);
 
-	void clean(std::vector<Herbivore> *h_vector, std::vector<Carnivore> *c_vector, 
-		std::vector<Water> *w_vector, std::vector<Plant> *p_vector);
 	void clean(std::vector<std::shared_ptr<Entity >> &entityVector, std::vector<std::shared_ptr<Resource >> &resourceVector);
 
 	void setResolution(Vector2f resolution);
+	void setMeatSprite(Sprite meatSprite);
 };
 

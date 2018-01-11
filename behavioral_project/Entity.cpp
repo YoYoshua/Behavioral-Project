@@ -89,7 +89,7 @@ Entity::~Entity()
 
 /*Getters and Setters*/
 
-String Entity::getType()
+std::string Entity::getType()
 {
 	switch (m_Type)
 	{
@@ -376,10 +376,20 @@ void Entity::stateChange()
 	if (m_Hunger >= 50)
 	{
 		m_IsHungry = true;
+
+		if (this->getType() == "CARNIVORE")
+		{
+			setIsHunting(true);
+		}
 	}
 	else if (m_Hunger < 30)
 	{
 		m_IsHungry = false;
+
+		if (this->getType() == "CARNIVORE")
+		{
+			setIsHunting(false);
+		}
 	}
 
 	if (m_Thirst >= 50)
@@ -392,22 +402,59 @@ void Entity::stateChange()
 	}
 
 	//Danger system
+	if (m_ClosestDanger != nullptr)
+	{
+		m_IsInDanger = true;
+	}
+	else
+	{
+		m_IsInDanger = false;
+	}
 }
 
 /*Behavioural functions*/
 void Entity::behaviour(Time dt)
 {
-	if (isInDanger())
+	if (m_IsInDanger)
 	{
 		inDanger(dt);
 	}
-	else if(isThirsty() && !isInDanger())
+	else if(m_IsThirsty)
 	{
-		thirsty(dt);
+		if (m_ClosestWater != nullptr)
+		{
+			thirsty(dt);
+		}
+		else if (m_IsHungry)
+		{
+			if (m_ClosestFood != nullptr)
+			{
+				hungry(dt);
+			}
+			else if (this->getType() == "CARNIVORE")
+			{
+				hunt(dt);
+			}
+			else
+			{
+				idle(dt);
+			}
+		}
 	}
-	else if (isHungry() && !isThirsty() && !isInDanger())
+	else if(m_IsHungry)
 	{
-		hungry(dt);
+		if (m_ClosestFood != nullptr)
+		{
+			hungry(dt);
+		}
+		else if (this->getType() == "CARNIVORE")
+		{
+			hunt(dt);
+		}
+		else
+		{
+			idle(dt);
+		}
 	}
 	else
 	{
@@ -417,16 +464,17 @@ void Entity::behaviour(Time dt)
 
 void Entity::idle(Time dt)
 {
-	if ((int)m_InternalClock % 5 == 0 && m_IdleCooldown == 0.f)
+	//Every five seconds get new position 
+	if (m_IdleCooldown >= 5.f)
 	{
 		srand(m_InternalClock * 1000 * dt.asMicroseconds());
 		m_NextPosition.x = rand() % (int)m_Resolution.x;
 		m_NextPosition.y = rand() % (int)m_Resolution.y;
-	}
-	m_IdleCooldown = m_IdleCooldown + dt.asSeconds();
-	if (m_IdleCooldown >= 5.f)
-	{
 		m_IdleCooldown = 0.f;
+	}
+	else if (m_IdleCooldown >= 0.f && m_IdleCooldown < 5.f)
+	{
+		m_IdleCooldown += dt.asSeconds();
 	}
 }
 
@@ -460,7 +508,7 @@ void Entity::thirsty(Time dt)
 
 void Entity::hungry(Time dt)
 {
-	//TODO: Finding food mechanics
+	m_NextPosition = m_ClosestFood->getPosition();
 }
 
 void Entity::reproduce(Time dt)
@@ -470,7 +518,14 @@ void Entity::reproduce(Time dt)
 
 void Entity::hunt(Time dt)
 {
-	m_NextPosition = m_ClosestPrey->getPosition();
+	if (m_ClosestPrey != nullptr)
+	{
+		m_NextPosition = m_ClosestPrey->getPosition();
+	}
+	else
+	{
+		idle(dt);
+	}
 }
 
 void Entity::attack(Time dt, std::shared_ptr<Entity> prey)
@@ -596,11 +651,11 @@ void Entity::update(Time dt)
 	if (m_NextPosition != getPosition())
 	{
 		//Flipping the sprite depending on next position
-		if (m_NextPosition.x >= getPosition().x && abs(m_NextPosition.x - getPosition().x) > 1.f)
+		if (m_NextPosition.x >= getPosition().x && abs(m_NextPosition.x - getPosition().x) > 5.f)
 		{
 			m_Direction = EntityDirection::RIGHT;
 		}
-		else
+		else if(m_NextPosition.x < getPosition().x && abs(m_NextPosition.x - getPosition().x) > 5.f)
 		{
 			m_Direction = EntityDirection::LEFT;
 		}

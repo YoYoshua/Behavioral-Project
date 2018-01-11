@@ -31,7 +31,13 @@ std::shared_ptr<Resource> ObjectFactory::createWater(Sprite sprite, Vector2f pos
 
 std::shared_ptr<Resource> ObjectFactory::createPlant(Sprite sprite, Vector2f position)
 {
-	std::shared_ptr<Resource> ptr(std::make_shared<Resource>(sprite, position, m_GameResolution));
+	std::shared_ptr<Resource> ptr(std::make_shared<Plant>(sprite, position, m_GameResolution));
+	return ptr;
+}
+
+std::shared_ptr<Resource> ObjectFactory::createMeat(Sprite sprite, Vector2f position)
+{
+	std::shared_ptr<Resource> ptr(std::make_shared<Meat>(sprite, position, m_GameResolution));
 	return ptr;
 }
 
@@ -47,6 +53,10 @@ void ObjectFactory::clean(std::vector<std::shared_ptr<Entity>>& entityVector, st
 		{
 			if ((*it)->isDead())
 			{
+				if ((*it)->getType() == "HERBIVORE")
+				{
+					resourceVector.push_back(createMeat(m_MeatSprite, (*it)->getPosition()));
+				}
 				it = entityVector.erase(it);
 			}
 			if (it == entityVector.end())
@@ -59,6 +69,10 @@ void ObjectFactory::clean(std::vector<std::shared_ptr<Entity>>& entityVector, st
 	{
 		if (entityVector[0]->isDead())
 		{
+			if (entityVector[0]->getType() == "HERBIVORE")
+			{
+				resourceVector.push_back(createMeat(m_MeatSprite, entityVector[0]->getPosition()));
+			}
 			entityVector.pop_back();
 		}
 	}
@@ -91,4 +105,9 @@ void ObjectFactory::clean(std::vector<std::shared_ptr<Entity>>& entityVector, st
 void ObjectFactory::setResolution(Vector2f resolution)
 {
 	m_GameResolution = resolution;
+}
+
+void ObjectFactory::setMeatSprite(Sprite meatSprite)
+{
+	m_MeatSprite = meatSprite;
 }

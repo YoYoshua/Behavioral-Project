@@ -57,6 +57,7 @@ void ObjectLogic::checkEntities(std::shared_ptr<Entity> entity, std::vector<std:
 		m_PositionVector.x = entity->getPosition().x - m->getPosition().x;
 		m_PositionVector.y = entity->getPosition().y - m->getPosition().y;
 		m_Length = sqrt(m_PositionVector.x * m_PositionVector.x + m_PositionVector.y * m_PositionVector.y);
+
 		if (entity->getCircleShape().getRadius() >= m_Length && entity != m)
 		{
 			entitiesNoticed.push_back(m);
@@ -69,7 +70,7 @@ void ObjectLogic::checkEntities(std::shared_ptr<Entity> entity, std::vector<std:
 			}
 
 			//Checking closest danger
-			if (m_Length < shortestDistanceDanger && m->getType() == "CARNIVORE")
+			if (m_Length < shortestDistanceDanger && m->getType() == "CARNIVORE" && entity->getType() == "HERBIVORE")
 			{
 				shortestDistanceDanger = m_Length;
 				closestDanger = m;
@@ -100,7 +101,7 @@ void ObjectLogic::checkEntities(std::shared_ptr<Entity> entity, std::vector<std:
 	}
 	else
 	{
-		entity->setClosestEntity(nullptr);
+		entity->setClosestDanger(nullptr);
 	}
 
 	if (closestPrey != nullptr)
@@ -109,7 +110,7 @@ void ObjectLogic::checkEntities(std::shared_ptr<Entity> entity, std::vector<std:
 	}
 	else
 	{
-		entity->setClosestEntity(nullptr);
+		entity->setClosestPrey(nullptr);
 	}
 }
 
@@ -166,7 +167,6 @@ void ObjectLogic::checkResources(std::shared_ptr<Entity> entity, std::vector<std
 void ObjectLogic::interact(Time dt, std::shared_ptr<Entity> entity, std::vector<std::shared_ptr<Entity>> &entitiesNoticed, std::vector<std::shared_ptr<Resource>> &resourcesNoticed)
 {
 	bool dangerNoticed = false;
-
 	Vector2f distanceVector;
 	float distance;
 
@@ -180,34 +180,11 @@ void ObjectLogic::interact(Time dt, std::shared_ptr<Entity> entity, std::vector<
 			distanceVector.y = entity->getPosition().y - p->getPosition().y;
 			distance = sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
 
-			if (entity->getType() != p->getType() && entity != p)
+			//Attacking
+			if (entity->isHunting() && distance < 20 && p->getType() == "HERBIVORE")
 			{
-				//Checking potential danger
-				if (entity->getType() == "HERBIVORE")
-				{
-					dangerNoticed = true;
-				}
-
-				//Hunting mechanics
-				if (entity->getType() == "CARNIVORE" && entity->isHunting() && distance < 20)
-				{
-					entity->attack(dt, p);
-				}
+				entity->attack(dt, p);
 			}
-			else
-			{
-				//TODO: Reproduction mechanic
-			}
-		}
-		
-		//Setting danger state
-		if (dangerNoticed)
-		{
-			entity->setIsInDanger(true);
-		}
-		else
-		{
-			entity->setIsInDanger(false);
 		}
 	}
 	
@@ -220,11 +197,22 @@ void ObjectLogic::interact(Time dt, std::shared_ptr<Entity> entity, std::vector<
 			distanceVector.y = entity->getPosition().y - p->getPosition().y;
 			distance = sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
 
-			if (entity->isThirsty() && distance < 20)
+			//Drinking
+			if (entity->isThirsty() && distance < 20 && p->getType() == "WATER")
 			{
 				entity->drink(dt, p);
 			}
+
+			//Eating
+			if (entity->isHungry() && entity->getType() == "HERBIVORE" && distance < 20 && p->getType() == "PLANT")
+			{
+				entity->eat(dt, p);
+			}
+			else if (entity->isHungry() && entity->getType() == "CARNIVORE" && distance < 20 && p->getType() == "MEAT")
+			{
+				entity->eat(dt, p);
+			}
+
 		}
-		//TODO: Eating and drinking
 	}
 }

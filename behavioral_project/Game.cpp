@@ -51,7 +51,7 @@ void Game::initialiseVariables()
 	herbivorePosition.x = videoResolution.x / 2;
 	herbivorePosition.y = videoResolution.y / 2;
 
-	herbivoreTexture.loadFromFile("graphics/krowka0000.png");
+	herbivoreTexture.loadFromFile("graphics/cow.png");
 
 	herbivoreSprite.setTexture(herbivoreTexture);
 
@@ -59,7 +59,7 @@ void Game::initialiseVariables()
 	carnivorePosition.x = videoResolution.x / 2;
 	carnivorePosition.y = videoResolution.y / 2;
 
-	carnivoreTexture.loadFromFile("graphics/lewek0000.png");
+	carnivoreTexture.loadFromFile("graphics/lion.png");
 
 	carnivoreSprite.setTexture(carnivoreTexture);
 
@@ -67,7 +67,7 @@ void Game::initialiseVariables()
 	waterPosition.x = videoResolution.x / 2;
 	waterPosition.y = videoResolution.y / 2;
 
-	waterTexture.loadFromFile("graphics/woda0000.png");
+	waterTexture.loadFromFile("graphics/water.png");
 
 	waterSprite.setTexture(waterTexture);
 
@@ -79,6 +79,15 @@ void Game::initialiseVariables()
 
 	plantSprite.setTexture(plantTexture);
 
+	//Meat
+	meatPosition.x = videoResolution.x / 2;
+	meatPosition.y = videoResolution.y / 2;
+
+	meatTexture.loadFromFile("graphics/meat.png");
+
+	meatSprite.setTexture(meatTexture);
+	factory.setMeatSprite(meatSprite);
+
 	//Background
 	backgroundPosition.x = videoResolution.x / 2;
 	backgroundPosition.y = videoResolution.y / 2;
@@ -87,9 +96,18 @@ void Game::initialiseVariables()
 
 	backgroundSprite.setTexture(backgroundTexture);
 
-	//Danger sprite
-	dangerTexture.loadFromFile("graphics/danger.png");
-	dangerSprite.setTexture(dangerTexture);
+	//Needs sprite
+	needsTexture.loadFromFile("graphics/needs.png");
+	IntRect rectangle;
+	Vector2i origin;
+	Vector2i size(20, 20);
+
+	//Danger
+	origin.x = 0;
+	origin.y = 0;
+	rectangle = new IntRect(origin, size);
+	dangerSprite.setTexture(needsTexture);
+	dangerSprite.setTextureRect();
 }
 
 void Game::handleInput()
@@ -148,6 +166,15 @@ void Game::handleInput()
 				plantPosition.y = rand() % (int)videoResolution.y;
 				resourceVector.push_back(factory.createPlant(plantSprite, plantPosition));
 			}
+
+			//Creating new meat objects
+			if (inputEvent.key.code == Keyboard::M)
+			{
+				srand((int)time(0) * dt.asMilliseconds() + 1 * 413 * resourceVector.size() + 5);
+				meatPosition.x = rand() % (int)videoResolution.x;
+				meatPosition.y = rand() % (int)videoResolution.y;
+				resourceVector.push_back(factory.createMeat(meatSprite, meatPosition));
+			}
 		}
 	}
 
@@ -173,23 +200,16 @@ void Game::updateScene()
 	rVectorSize = resourceVector.size();
 
 	//Updating entity vector
-	if (!entityVector.empty())
+	for (auto p : entityVector)
 	{
-		for (int i = 0; i <= eVectorSize - 1; i++)
-		{
-			entityVector[i]->update(dt);
-		}
+		p->update(dt);
 	}
 
 	//Updating resource vector
-	if (!resourceVector.empty())
+	for (auto p : resourceVector)
 	{
-		for (int i = 0; i <= rVectorSize - 1; i++)
-		{
-			resourceVector[i]->update(dt);
-		}
+		p->update(dt);
 	}
-	
 	//Cleaning dead objects
 	factory.clean(entityVector, resourceVector);
 
@@ -213,10 +233,33 @@ void Game::updateScene()
 
 	if (debugModeActive)
 	{
-		ssDebugMode << "Entities:" << eVectorSize << std::endl;
+		int i = 0;
+		ssDebugMode << "Entities: " << entityVector.size() << std::endl;
+		ssDebugMode << "Resources: " << resourceVector.size() << std::endl << std::endl;
 		for (auto p : entityVector)
 		{
-			ssDebugMode << "Position:" << p->getPosition().x << ", " << p->getPosition().y << std::endl;
+			ssDebugMode << "Entity #:" << i << std::endl;
+			ssDebugMode << "Type:" << p->getType() << std::endl;
+			ssDebugMode << "Current position: " << p->getPosition().x << ", " << p->getPosition().y << std::endl;
+			ssDebugMode << "Next position: " << p->getNextPosition().x << ", " << p->getNextPosition().y << std::endl;
+			ssDebugMode << "Idle cooldown timer: " << p->m_IdleCooldown << std::endl;
+			ssDebugMode << "HP: " << p->getHealth() << std::endl;
+			ssDebugMode << "Hunger: " << p->getHunger() << std::endl;
+			ssDebugMode << "Thirst: " << p->getThirst() << std::endl;
+			ssDebugMode << "Is thirsty:" << p->isThirsty() << std::endl;
+			ssDebugMode << "Is hungry:" << p->isHungry() << std::endl;
+			ssDebugMode << "Is in danger:" << p->isInDanger() << std::endl;
+			ssDebugMode << "Is hunting:" << p->isHunting() << std::endl << std::endl;
+			i++;
+		}
+
+		i = 0;
+		for (auto p : resourceVector)
+		{
+			ssDebugMode << "Resource #:" << i << std::endl;
+			ssDebugMode << "Type:" << p->getType() << std::endl;
+			ssDebugMode << "Current position: " << p->getPosition().x << ", " << p->getPosition().y << std::endl << std::endl;
+			i++;
 		}
 
 		debugText.setString(ssDebugMode.str());
@@ -233,36 +276,31 @@ void Game::drawScene()
 	//Drawing background
 	gameWindow.draw(backgroundSprite);
 
-	//Drawing game objects
-	if (!resourceVector.empty())
+	/*Drawing game objects*/
+	//Drawing resources
+	for (auto p : resourceVector)
 	{
-		for (int i = 0; i <= rVectorSize - 1; i++)
+		gameWindow.draw(p->getSprite());
+		if (debugModeActive)
 		{
-			gameWindow.draw(resourceVector[i]->getSprite());
-			if (debugModeActive)
-			{
-				gameWindow.draw(resourceVector[i]->getCircleShape());
-			}
+			gameWindow.draw(p->getCircleShape());
 		}
 	}
 
-	if (!entityVector.empty())
+	//Drawing entities
+	for (auto p : entityVector)
 	{
-		for (int i = 0; i <= eVectorSize - 1; i++)
+		gameWindow.draw(p->getSprite());
+		if (debugModeActive)
 		{
-			gameWindow.draw(entityVector[i]->getSprite());
-			if (debugModeActive)
-			{
-				gameWindow.draw(entityVector[i]->getCircleShape());
-			}
+			gameWindow.draw(p->getCircleShape());
+		}
 
-			if (entityVector[i]->isInDanger())
-			{
-				gameWindow.draw(entityVector[i]->getDangerSprite());
-			}
+		if (p->isInDanger())
+		{
+			gameWindow.draw(p->getDangerSprite());
 		}
 	}
-
 	//Drawing text on scene
 	if (debugModeActive)
 	{
