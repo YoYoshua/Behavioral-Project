@@ -24,9 +24,10 @@ void ObjectLogic::processLogic(Time dt, std::vector<std::shared_ptr<Entity>> &en
 	{
 		for (auto p : entityVector)
 		{
-			//Clear noticed objects vectors
+			//Clear private objects vectors
 			entitiesNoticed.clear();
 			resourcesNoticed.clear();
+			entitiesCreated.clear();
 
 			//Check surrounding entities
 			checkEntities(p, entityVector);
@@ -36,6 +37,11 @@ void ObjectLogic::processLogic(Time dt, std::vector<std::shared_ptr<Entity>> &en
 
 			//Interact with surrounding objects
 			interact(dt, p, entitiesNoticed, resourcesNoticed);
+		}
+		//Create new object based on mating
+		for (auto p : entitiesCreated)
+		{
+			entityVector.push_back(p);
 		}
 	}
 }
@@ -164,7 +170,8 @@ void ObjectLogic::checkResources(std::shared_ptr<Entity> entity, std::vector<std
 	}
 }
 
-void ObjectLogic::interact(Time dt, std::shared_ptr<Entity> entity, std::vector<std::shared_ptr<Entity>> &entitiesNoticed, std::vector<std::shared_ptr<Resource>> &resourcesNoticed)
+void ObjectLogic::interact(Time dt, std::shared_ptr<Entity> entity, std::vector<std::shared_ptr<Entity>> &entitiesNoticed, 
+	std::vector<std::shared_ptr<Resource>> &resourcesNoticed)
 {
 	bool dangerNoticed = false;
 	Vector2f distanceVector;
@@ -184,6 +191,33 @@ void ObjectLogic::interact(Time dt, std::shared_ptr<Entity> entity, std::vector<
 			if (entity->isHunting() && distance < 20 && p->getType() == "HERBIVORE")
 			{
 				entity->attack(dt, p);
+			}
+
+			//Reproducing
+			if (entity->isMating() && p->isMating() && distance < 20 && p->getType() == entity->getType())
+			{
+				if (entity->mate(dt, p))
+				{
+					if (entity->getType() == "HERBIVORE")
+					{
+						ObjectFactory objectFactory;
+						objectFactory.setResolution(p->m_Resolution);
+						entitiesCreated.push_back(objectFactory.createHerbivore(entity->getSprite(), entity->getPosition()));
+
+						//Setting icons
+						(entitiesCreated.back())->setDangerSprite(p->getDangerSprite());
+						(entitiesCreated.back())->setHungerSprite(p->getHungerSprite());
+						(entitiesCreated.back())->setThirstySprite(p->getThirstySprite());
+						(entitiesCreated.back())->setMatingSprite(p->getMatingSprite());
+					}
+					else if (entity->getType() == "CARNIVORE")
+					{
+						ObjectFactory objectFactory;
+						objectFactory.setResolution(p->m_Resolution);
+						entitiesCreated.push_back(objectFactory.createCarnivore(entity->getSprite(), entity->getPosition()));
+					}
+				}
+
 			}
 		}
 	}

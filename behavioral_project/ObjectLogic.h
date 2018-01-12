@@ -7,6 +7,7 @@
 #include "Carnivore.h"
 #include "Water.h"
 #include "Plant.h"
+#include "ObjectFactory.h"
 
 class ObjectLogic
 {
@@ -24,6 +25,8 @@ private:
 	std::vector<std::shared_ptr<Entity>> entitiesNoticed;
 	std::vector<std::shared_ptr<Resource>> resourcesNoticed;
 
+	std::vector<std::shared_ptr<Entity>> entitiesCreated;
+
 public:
 	ObjectLogic();
 	~ObjectLogic();
@@ -37,6 +40,7 @@ public:
 	//Various logic methods
 	void checkEntities(std::shared_ptr<Entity> entity, std::vector<std::shared_ptr<Entity>> &entityVector);
 	void checkResources(std::shared_ptr<Entity> entity, std::vector<std::shared_ptr<Resource>> &resourceVector);
-	void interact(Time dt, std::shared_ptr<Entity> entityOne, std::vector<std::shared_ptr<Entity>> &entitiesNoticed, std::vector<std::shared_ptr<Resource>> &resourcesNoticed);
+	void interact(Time dt, std::shared_ptr<Entity> entityOne, std::vector<std::shared_ptr<Entity>> &entitiesNoticed, 
+		std::vector<std::shared_ptr<Resource>> &resourcesNoticed);
 };
 

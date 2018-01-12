@@ -72,6 +72,7 @@ private:
 	Event inputEvent;
 	Clock clock;
 	Time dt;
+	float gameSpeed;
 
 	/*Various objects*/
 	ObjectFactory factory;

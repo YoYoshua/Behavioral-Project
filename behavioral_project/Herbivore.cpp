@@ -28,10 +28,12 @@ Herbivore::Herbivore(Sprite sprite, Vector2f position, Vector2f resolution)
 	m_Health = 100.0f;
 	m_Hunger = 50.0f;
 	m_Thirst = 50.0f;
+	m_ReproductionValue = 0.f;
 	m_Speed = 150;
 
 	m_IsHungry = false;
 	m_IsThirsty = false;
+	m_IsMating = false;
 
 	m_IsInDanger = false;
 	m_IsHunting = false;
@@ -45,6 +47,7 @@ Herbivore::Herbivore(Sprite sprite, Vector2f position, Vector2f resolution)
 
 	m_InternalClock = 0;
 	m_IdleCooldown = 5.f;
+	m_MateCooldown = 5.f;
 
 	m_VisionCircle.setRadius(250);
 	m_VisionCircle.setOrigin(250, 250);

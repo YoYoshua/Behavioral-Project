@@ -98,16 +98,34 @@ void Game::initialiseVariables()
 
 	//Needs sprite
 	needsTexture.loadFromFile("graphics/needs.png");
-	IntRect rectangle;
 	Vector2i origin;
 	Vector2i size(20, 20);
 
 	//Danger
 	origin.x = 0;
 	origin.y = 0;
-	rectangle = new IntRect(origin, size);
+	IntRect rectangle(origin, size);
 	dangerSprite.setTexture(needsTexture);
-	dangerSprite.setTextureRect();
+	dangerSprite.setTextureRect(rectangle);
+
+	//Mating
+	rectangle.top = rectangle.top + 20;
+	matingSprite.setTexture(needsTexture);
+	matingSprite.setTextureRect(rectangle);
+
+	//Hungry
+	rectangle.top = rectangle.top + 20;
+	hungrySprite.setTexture(needsTexture);
+	hungrySprite.setTextureRect(rectangle);
+
+	//Thirsty
+	rectangle.top = rectangle.top + 20;
+	thirstySprite.setTexture(needsTexture);
+	thirstySprite.setTextureRect(rectangle);
+
+	//Game speed
+	gameSpeed = 1;
+
 }
 
 void Game::handleInput()
@@ -136,7 +154,12 @@ void Game::handleInput()
 				herbivorePosition.x = rand() % (int)videoResolution.x;
 				herbivorePosition.y = rand() % (int)videoResolution.y;
 				entityVector.push_back(factory.createHerbivore(herbivoreSprite, herbivorePosition));
+
+				//Setting icons
 				(entityVector.back())->setDangerSprite(dangerSprite);
+				(entityVector.back())->setHungerSprite(hungrySprite);
+				(entityVector.back())->setThirstySprite(thirstySprite);
+				(entityVector.back())->setMatingSprite(matingSprite);
 			}
 
 			//Creating new carnivore objects
@@ -146,7 +169,12 @@ void Game::handleInput()
 				carnivorePosition.x = rand() % (int)videoResolution.x;
 				carnivorePosition.y = rand() % (int)videoResolution.y;
 				entityVector.push_back(factory.createCarnivore(carnivoreSprite, carnivorePosition));
+
+				//Setting icons
 				(entityVector.back())->setDangerSprite(dangerSprite);
+				(entityVector.back())->setHungerSprite(hungrySprite);
+				(entityVector.back())->setThirstySprite(thirstySprite);
+				(entityVector.back())->setMatingSprite(matingSprite);
 			}
 
 			//Creating new water objects
@@ -175,6 +203,16 @@ void Game::handleInput()
 				meatPosition.y = rand() % (int)videoResolution.y;
 				resourceVector.push_back(factory.createMeat(meatSprite, meatPosition));
 			}
+
+			//Changing game speed
+			if (inputEvent.key.code == Keyboard::Num1)
+			{
+				gameSpeed = 1;
+			}
+			if (inputEvent.key.code == Keyboard::Num2)
+			{
+				gameSpeed = 2;
+			}
 		}
 	}
 
@@ -192,7 +230,7 @@ void Game::updateScene()
 	/*********************UPDATE SCENE************************/
 
 	//Updating delta time
-	dt = clock.restart();
+	dt = clock.restart() * gameSpeed;
 
 	/*Updating game objects*/
 	//Getting vector sizes
@@ -243,7 +281,9 @@ void Game::updateScene()
 			ssDebugMode << "Current position: " << p->getPosition().x << ", " << p->getPosition().y << std::endl;
 			ssDebugMode << "Next position: " << p->getNextPosition().x << ", " << p->getNextPosition().y << std::endl;
 			ssDebugMode << "Idle cooldown timer: " << p->m_IdleCooldown << std::endl;
+			ssDebugMode << "Mating cooldown timer: " << p->m_MateCooldown << std::endl;
 			ssDebugMode << "HP: " << p->getHealth() << std::endl;
+			ssDebugMode << "Priority: " << p->getPriority() << std::endl;
 			ssDebugMode << "Hunger: " << p->getHunger() << std::endl;
 			ssDebugMode << "Thirst: " << p->getThirst() << std::endl;
 			ssDebugMode << "Is thirsty:" << p->isThirsty() << std::endl;
@@ -296,9 +336,25 @@ void Game::drawScene()
 			gameWindow.draw(p->getCircleShape());
 		}
 
-		if (p->isInDanger())
+		//Drawing icon
+		std::string priority;
+		priority = p->getPriority();
+
+		if (priority == "DANGER")
 		{
 			gameWindow.draw(p->getDangerSprite());
+		}
+		else if (priority == "THIRSTY")
+		{
+			gameWindow.draw(p->getThirstySprite());
+		}
+		else if (priority == "HUNGRY")
+		{
+			gameWindow.draw(p->getHungerSprite());
+		}
+		else if (priority == "MATING")
+		{
+			gameWindow.draw(p->getMatingSprite());
 		}
 	}
 	//Drawing text on scene

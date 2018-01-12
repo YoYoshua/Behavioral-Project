@@ -50,10 +50,12 @@ Entity::Entity(Sprite sprite, Vector2f position, Vector2f resolution)
 	m_Health = 100.0f;
 	m_Hunger = 50.0f;
 	m_Thirst = 50.0f;
+	m_ReproductionValue = 0.f;
 	m_Speed = 150;
 
 	m_IsHungry = false;
 	m_IsThirsty = false;
+	m_IsMating = false;
 
 	m_IsInDanger = false;
 	m_IsHunting = false;
@@ -66,7 +68,8 @@ Entity::Entity(Sprite sprite, Vector2f position, Vector2f resolution)
 	m_Resolution = resolution;
 
 	m_InternalClock = 0;
-	m_IdleCooldown = 0;
+	m_IdleCooldown = 5.f;
+	m_MateCooldown = 5.f;
 
 	m_VisionCircle.setRadius(150);
 	m_VisionCircle.setOrigin(150, 150);
@@ -104,6 +107,30 @@ std::string Entity::getType()
 
 		default:
 			return "UNSPECIFIED";
+	}
+}
+
+std::string Entity::getPriority()
+{
+	switch (m_Priority)
+	{
+	case EntityPriority::NONE:
+		return "NONE";
+
+	case EntityPriority::DANGER:
+		return "DANGER";
+
+	case EntityPriority::HUNGRY:
+		return "HUNGRY";
+
+	case EntityPriority::THIRSTY:
+		return "THIRSTY";
+
+	case EntityPriority::MATING:
+		return "MATING";
+
+	default:
+		return "NONE";
 	}
 }
 
@@ -175,6 +202,42 @@ Sprite Entity::getDangerSprite()
 	return m_DangerSprite;
 }
 
+void Entity::setHungerSprite(Sprite sprite)
+{
+	m_HungerSprite = sprite;
+	m_HungerSprite.setOrigin(m_Sprite.getLocalBounds().width / 2 - 30, m_Sprite.getLocalBounds().height / 2 + 30);
+	m_HungerSprite.setPosition(m_Position);
+}
+
+Sprite Entity::getHungerSprite()
+{
+	return m_HungerSprite;
+}
+
+void Entity::setThirstySprite(Sprite sprite)
+{
+	m_ThirstySprite = sprite;
+	m_ThirstySprite.setOrigin(m_Sprite.getLocalBounds().width / 2 - 30, m_Sprite.getLocalBounds().height / 2 + 30);
+	m_ThirstySprite.setPosition(m_Position);
+}
+
+Sprite Entity::getThirstySprite()
+{
+	return m_ThirstySprite;
+}
+
+void Entity::setMatingSprite(Sprite sprite)
+{
+	m_MatingSprite = sprite;
+	m_MatingSprite.setOrigin(m_Sprite.getLocalBounds().width / 2 - 30, m_Sprite.getLocalBounds().height / 2 + 30);
+	m_MatingSprite.setPosition(m_Position);
+}
+
+Sprite Entity::getMatingSprite()
+{
+	return m_MatingSprite;
+}
+
 //Vision Circle
 CircleShape Entity::getCircleShape()
 {
@@ -189,7 +252,7 @@ void Entity::setPosition(Vector2f position)
 
 void Entity::setPosition(float x, float y)
 {
-	m_Sprite.setPosition(x, y);
+	m_Sprite.setPosition((int)x, (int)y);
 }
 
 Vector2f Entity::getPosition()
@@ -240,7 +303,7 @@ bool Entity::isThirsty()
 
 void Entity::setIsThirsty(bool set)
 {
-	m_IsThirsty= set;
+	m_IsThirsty = set;
 }
 
 //In Danger
@@ -252,6 +315,17 @@ bool Entity::isInDanger()
 void Entity::setIsInDanger(bool set)
 {
 	m_IsInDanger = set;
+}
+
+//Mating
+bool Entity::isMating()
+{
+	return m_IsMating;
+}
+
+void Entity::setIsMating(bool set)
+{
+	m_IsMating = set;
 }
 
 //Hunting
@@ -410,6 +484,16 @@ void Entity::stateChange()
 	{
 		m_IsInDanger = false;
 	}
+
+	//Mating system
+	if (m_ReproductionValue == 100.f)
+	{
+		m_IsMating = true;
+	}
+	else
+	{
+		m_IsMating = false;
+	}
 }
 
 /*Behavioural functions*/
@@ -455,6 +539,10 @@ void Entity::behaviour(Time dt)
 		{
 			idle(dt);
 		}
+	}
+	else if (m_IsMating)
+	{
+		matingCall(dt);
 	}
 	else
 	{
@@ -511,11 +599,6 @@ void Entity::hungry(Time dt)
 	m_NextPosition = m_ClosestFood->getPosition();
 }
 
-void Entity::reproduce(Time dt)
-{
-	//TODO: Reproduction mechanics
-}
-
 void Entity::hunt(Time dt)
 {
 	if (m_ClosestPrey != nullptr)
@@ -533,6 +616,18 @@ void Entity::attack(Time dt, std::shared_ptr<Entity> prey)
 	prey->setHealth(prey->getHealth() - dt.asSeconds() * 5);
 }
 
+void Entity::matingCall(Time dt)
+{
+	if (m_ClosestEntity != nullptr && m_ClosestEntity->getType() == this->getType() && m_ClosestEntity->isMating())
+	{
+		m_NextPosition = m_ClosestEntity->getPosition();
+	}
+	else
+	{
+		idle(dt);
+	}
+}
+
 void Entity::eat(Time dt, std::shared_ptr<Resource> food)
 {
 	m_Hunger = m_Hunger - dt.asSeconds() * 4;
@@ -545,13 +640,32 @@ void Entity::drink(Time dt, std::shared_ptr<Resource> water)
 	water->setAmount(water->getAmount() - dt.asSeconds() * 4);
 }
 
+bool Entity::mate(Time dt, std::shared_ptr<Entity> partner)
+{
+	//After five seconds finish mating
+	if (m_MateCooldown <= 0.f)
+	{
+		//finish mating
+		m_MateCooldown = 5.f;
+		this->m_ReproductionValue = 0.f;
+		partner->m_ReproductionValue = 0.f;
+		return true;
+	}
+	else if (m_MateCooldown > 0.f && m_MateCooldown <= 5.f)
+	{
+		m_MateCooldown -= dt.asSeconds();
+		return false;
+	}
+}
+
 /*Updating*/
 
 void Entity::updateParameters(Time dt)
 {
-	//Lowering parameters with passing time
+	//Changing parameters with passing time
 	m_Hunger = m_Hunger + dt.asSeconds();
 	m_Thirst = m_Thirst + dt.asSeconds() / 2;
+	m_ReproductionValue = m_ReproductionValue + dt.asSeconds() * 4;
 
 	//Updating speed parameter according to hunger and thirst
 	m_Speed = DEFAULT_SPEED - ((int)m_Hunger - 50) - ((int)m_Thirst - 50);
@@ -619,6 +733,37 @@ void Entity::updateParameters(Time dt)
 	{
 		m_Health = 100;
 	}
+
+	//Passing reproduction value
+	if (m_ReproductionValue >= 100.f)
+	{
+		m_ReproductionValue = 100.f;
+	}
+}
+
+void Entity::updatePriority()
+{
+	if (m_IsInDanger)
+	{
+		m_Priority = EntityPriority::DANGER;
+	}
+	else if (m_IsThirsty && !m_IsInDanger)
+	{
+		m_Priority = EntityPriority::THIRSTY;
+	}
+	else if (m_IsHungry && !m_IsThirsty && !m_IsInDanger)
+	{
+		m_Priority = EntityPriority::HUNGRY;
+	}
+	else if (m_IsMating && !m_IsHungry && !m_IsThirsty && !m_IsInDanger)
+	{
+		m_Priority = EntityPriority::MATING;
+	}
+	else
+	{
+		m_Priority = EntityPriority::NONE;
+	}
+
 }
 
 void Entity::update(Time dt)
@@ -631,6 +776,9 @@ void Entity::update(Time dt)
 
 	//Setting actual state
 	stateChange();
+
+	//Updating entity priority
+	updatePriority();
 
 	//Setting behaviour
 	behaviour(dt);
@@ -685,9 +833,17 @@ void Entity::update(Time dt)
 			m_IsFlipped = false;
 		}
 
-		//Updating position of the sprite 
+		//Updating position of the sprite and icons
 		m_Sprite.setPosition(getPosition() - movementStep);
+
+		//Converting to int
+		m_Sprite.setPosition(getPosition().x, getPosition().y);
+
 		m_DangerSprite.setPosition(getPosition() - movementStep);
+		m_HungerSprite.setPosition(getPosition() - movementStep);
+		m_ThirstySprite.setPosition(getPosition() - movementStep);
+		m_MatingSprite.setPosition(getPosition() - movementStep);
+
 		m_VisionCircle.setPosition(getPosition() - movementStep);
 	}
 }

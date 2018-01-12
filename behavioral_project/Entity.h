@@ -12,11 +12,11 @@ private:
 	/*Object variables*/
 	//Object parameters
 	float m_Health;
-
 	float m_Hunger;
 	float m_Thirst;
-
+	float m_ReproductionValue;
 	int m_Speed;
+
 
 	//Constant parameters
 	float MAX_HEALTH = 100;
@@ -33,11 +33,13 @@ private:
 
 	FloatRect m_Boundaries;
 
-	Vector2f m_Resolution;
-
 	//Entity type
 	enum class EntityType { UNSPECIFIED, HERBIVORE, CARNIVORE };
 	EntityType m_Type;
+
+	//Entity priority
+	enum class EntityPriority { DANGER, HUNGRY, THIRSTY, MATING, NONE };
+	EntityPriority m_Priority;
 
 	//Entity direction
 	enum class EntityDirection { LEFT, RIGHT };
@@ -46,6 +48,7 @@ private:
 	//Internal states
 	bool m_IsHungry;
 	bool m_IsThirsty;
+	bool m_IsMating;
 
 	bool m_FoundWater;
 	bool m_FoundFood;
@@ -69,6 +72,9 @@ private:
 
 	//Visual sprites
 	Sprite m_DangerSprite;
+	Sprite m_HungerSprite;
+	Sprite m_ThirstySprite;
+	Sprite m_MatingSprite;
 
 	//Vision circle
 	CircleShape m_VisionCircle;
@@ -83,6 +89,8 @@ private:
 
 public:
 	float m_IdleCooldown;
+	float m_MateCooldown;
+	Vector2f m_Resolution;
 
 public:
 	/*Constructors and Destructor*/
@@ -93,6 +101,9 @@ public:
 	/*Getters and Setters*/
 	//Type
 	std::string getType();
+
+	//Priority
+	std::string getPriority();
 
 	//Health
 	void setHealth(float health);
@@ -117,6 +128,18 @@ public:
 	//Danger Sprite
 	void setDangerSprite(Sprite sprite);
 	Sprite getDangerSprite();
+
+	//Hunger Sprite
+	void setHungerSprite(Sprite sprite);
+	Sprite getHungerSprite();
+
+	//Thirsty Sprite
+	void setThirstySprite(Sprite sprite);
+	Sprite getThirstySprite();
+
+	//Mating Sprite
+	void setMatingSprite(Sprite sprite);
+	Sprite getMatingSprite();
 
 	//Vision Circle
 	CircleShape getCircleShape();
@@ -143,6 +166,9 @@ public:
 
 	bool isInDanger();
 	void setIsInDanger(bool set);
+
+	bool isMating();
+	void setIsMating(bool set);
 
 	bool isHunting();
 	void setIsHunting(bool set);
@@ -188,9 +214,11 @@ public:
 	void inDanger(Time dt);
 	void thirsty(Time dt);
 	void hungry(Time dt);
-	void reproduce(Time dt);
 	void hunt(Time dt);
 	void attack(Time dt, std::shared_ptr<Entity> prey);
+	void matingCall(Time dt);
+
+	bool mate(Time dt, std::shared_ptr<Entity> partner);
 
 	//Consumption methods
 	void eat(Time dt, std::shared_ptr<Resource> food);
@@ -198,6 +226,7 @@ public:
 
 	/*Update function*/
 	void updateParameters(Time dt);
+	void updatePriority();
 	void update(Time dt);
 
 	/*Friend classes declaration*/
