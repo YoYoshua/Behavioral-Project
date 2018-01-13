@@ -21,8 +21,8 @@ public:
 	ObjectFactory();
 	~ObjectFactory();
 
-	std::shared_ptr<Entity> createHerbivore(Sprite sprite, Vector2f position);
-	std::shared_ptr<Entity> createCarnivore(Sprite sprite, Vector2f position);
+	std::shared_ptr<Entity> createHerbivore(Sprite childSprite, Sprite adultSprite, Vector2f position);
+	std::shared_ptr<Entity> createCarnivore(Sprite childSprite, Sprite adultSprite, Vector2f position);
 	std::shared_ptr<Resource> createWater(Sprite sprite, Vector2f position);
 	std::shared_ptr<Resource> createPlant(Sprite sprite, Vector2f position);
 	std::shared_ptr<Resource> createMeat(Sprite sprite, Vector2f position);

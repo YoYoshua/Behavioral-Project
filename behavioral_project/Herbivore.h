@@ -7,7 +7,7 @@ class Herbivore :
 public:
 	//Constructors and Destructor
 	Herbivore();
-	Herbivore(Sprite sprite, Vector2f position, Vector2f resolution);
+	Herbivore(Sprite childSprite, Sprite adultSprite, std::string sex, Vector2f position, Vector2f resolution);
 	~Herbivore();
 };
 

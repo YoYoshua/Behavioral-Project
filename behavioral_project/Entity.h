@@ -15,6 +15,10 @@ private:
 	float m_Hunger;
 	float m_Thirst;
 	float m_ReproductionValue;
+
+	float m_Age;
+	float m_AgeTimer;
+
 	int m_Speed;
 
 
@@ -28,6 +32,9 @@ private:
 
 	//Game engine variables
 	Sprite m_Sprite;
+	Sprite m_ChildSprite;
+	Sprite m_AdultSprite;
+
 	Vector2f m_Position;
 	Vector2f m_NextPosition;
 
@@ -40,6 +47,10 @@ private:
 	//Entity priority
 	enum class EntityPriority { DANGER, HUNGRY, THIRSTY, MATING, NONE };
 	EntityPriority m_Priority;
+
+	//Entity sex
+	enum class EntitySex { MALE, FEMALE };
+	EntitySex m_EntitySex;
 
 	//Entity direction
 	enum class EntityDirection { LEFT, RIGHT };
@@ -58,6 +69,7 @@ private:
 	bool m_IsInDanger;
 	bool m_IsHunting;
 
+	bool m_IsAdult;
 	bool m_IsDead;
 
 	bool m_IsDrinking;
@@ -95,7 +107,7 @@ public:
 public:
 	/*Constructors and Destructor*/
 	 Entity();
-	 Entity(Sprite sprite, Vector2f position, Vector2f resolution);
+	 Entity(Sprite childSprite, Sprite adultSprite, std::string sex, Vector2f position, Vector2f resolution);
 	~Entity();
 
 	/*Getters and Setters*/
@@ -104,6 +116,9 @@ public:
 
 	//Priority
 	std::string getPriority();
+
+	//Sex
+	std::string getSex();
 
 	//Health
 	void setHealth(float health);
@@ -121,9 +136,16 @@ public:
 	void setSpeed(float speed);
 	float getSpeed();
 
+	//Age
+	void setAge(float age);
+	float getAge();
+
 	//Sprite
 	void setSprite(Sprite sprite);
 	Sprite getSprite();
+
+	Sprite getAdultSprite();
+	Sprite getChildSprite();
 
 	//Danger Sprite
 	void setDangerSprite(Sprite sprite);
@@ -202,10 +224,6 @@ public:
 	void setClosestFood(std::shared_ptr<Resource> food);
 	std::shared_ptr<Resource> getClosestFood();
 
-	/*Events*/
-	void death();
-	void stateChange();
-
 	/*Behavioural functions*/
 	void behaviour(Time dt);
 
@@ -224,9 +242,14 @@ public:
 	void eat(Time dt, std::shared_ptr<Resource> food);
 	void drink(Time dt, std::shared_ptr<Resource> water);
 
+	/*Events*/
+	void death();
+	void stateChange();
+
 	/*Update function*/
 	void updateParameters(Time dt);
 	void updatePriority();
+	void updatePosition(Time dt);
 	void update(Time dt);
 
 	/*Friend classes declaration*/

@@ -47,22 +47,42 @@ void Game::initialiseVariables()
 	fpsText.setPosition(videoResolution.x - 80, 40);
 
 	/*Game objects initialisation*/
+	Vector2i origin(0, 0);
+	Vector2i size(76, 56);
+	IntRect rectangle(origin, size);
+
 	//Herbivore
 	herbivorePosition.x = videoResolution.x / 2;
 	herbivorePosition.y = videoResolution.y / 2;
 
 	herbivoreTexture.loadFromFile("graphics/cow.png");
 
-	herbivoreSprite.setTexture(herbivoreTexture);
+	herbivoreChildSprite.setTexture(herbivoreTexture);
+	herbivoreChildSprite.setTextureRect(rectangle);
+
+	rectangle.top = 56;
+
+	herbivoreAdultSprite.setTexture(herbivoreTexture);
+	herbivoreAdultSprite.setTextureRect(rectangle);
 
 	//Carnivore
+	rectangle.top = 0;
+	rectangle.width = 78;
+
 	carnivorePosition.x = videoResolution.x / 2;
 	carnivorePosition.y = videoResolution.y / 2;
 
 	carnivoreTexture.loadFromFile("graphics/lion.png");
 
-	carnivoreSprite.setTexture(carnivoreTexture);
+	carnivoreChildSprite.setTexture(carnivoreTexture);
+	carnivoreChildSprite.setTextureRect(rectangle);
 
+	rectangle.top = 56;
+	rectangle.height = 66;
+
+	carnivoreAdultSprite.setTexture(carnivoreTexture);
+	carnivoreAdultSprite.setTextureRect(rectangle);
+	
 	//Water
 	waterPosition.x = videoResolution.x / 2;
 	waterPosition.y = videoResolution.y / 2;
@@ -89,37 +109,63 @@ void Game::initialiseVariables()
 	factory.setMeatSprite(meatSprite);
 
 	//Background
-	backgroundPosition.x = videoResolution.x / 2;
-	backgroundPosition.y = videoResolution.y / 2;
+	background.setPrimitiveType(Quads);
 
-	backgroundTexture.loadFromFile("graphics/background.png");
+	int screenWidth = videoResolution.x / 80 + 1; 	//80 means tile size, + 1 because of int conversion causing black strips around edges
+	int screenHeight = videoResolution.y / 80 + 1; 
+	background.resize(screenWidth * screenHeight * 4);
+	backgroundTexture.loadFromFile("graphics/backgroundTile.png");
 
-	backgroundSprite.setTexture(backgroundTexture);
+	//Generating tile-based background
+	int currentVertex = 0;
+
+	for (int i = 0; i < screenWidth; i++)
+	{
+		for (int j = 0; j < screenHeight; j++)
+		{
+			//Set position
+			background[currentVertex + 0].position = Vector2f(i * 80, j * 80);
+			background[currentVertex + 1].position = Vector2f((i * 80) + 80, j * 80);
+			background[currentVertex + 2].position = Vector2f((i * 80) + 80, (j * 80) + 80);
+			background[currentVertex + 3].position = Vector2f(i * 80, (j * 80) + 80);
+
+			//Set texture
+			background[currentVertex + 0].texCoords = Vector2f(0, 0);
+			background[currentVertex + 1].texCoords = Vector2f(80, 0);
+			background[currentVertex + 2].texCoords = Vector2f(80, 80);
+			background[currentVertex + 3].texCoords = Vector2f(0, 80);
+
+			currentVertex = currentVertex + 4;
+		}
+	}
 
 	//Needs sprite
 	needsTexture.loadFromFile("graphics/needs.png");
-	Vector2i origin;
-	Vector2i size(20, 20);
 
 	//Danger
-	origin.x = 0;
-	origin.y = 0;
-	IntRect rectangle(origin, size);
+	rectangle.left = 0;
+	rectangle.top = 0;
+	rectangle.width = 20;
+	rectangle.height = 20;
+
 	dangerSprite.setTexture(needsTexture);
 	dangerSprite.setTextureRect(rectangle);
 
 	//Mating
 	rectangle.top = rectangle.top + 20;
+
 	matingSprite.setTexture(needsTexture);
 	matingSprite.setTextureRect(rectangle);
 
 	//Hungry
 	rectangle.top = rectangle.top + 20;
+
 	hungrySprite.setTexture(needsTexture);
 	hungrySprite.setTextureRect(rectangle);
 
 	//Thirsty
 	rectangle.top = rectangle.top + 20;
+
 	thirstySprite.setTexture(needsTexture);
 	thirstySprite.setTextureRect(rectangle);
 
@@ -153,7 +199,7 @@ void Game::handleInput()
 				srand((int)time(0) * dt.asMilliseconds() + 1 * 800 * entityVector.size() + 5);
 				herbivorePosition.x = rand() % (int)videoResolution.x;
 				herbivorePosition.y = rand() % (int)videoResolution.y;
-				entityVector.push_back(factory.createHerbivore(herbivoreSprite, herbivorePosition));
+				entityVector.push_back(factory.createHerbivore(herbivoreChildSprite, herbivoreAdultSprite, herbivorePosition));
 
 				//Setting icons
 				(entityVector.back())->setDangerSprite(dangerSprite);
@@ -168,7 +214,7 @@ void Game::handleInput()
 				srand((int)time(0) * dt.asMilliseconds() + 1 * 850 * entityVector.size() + 5);
 				carnivorePosition.x = rand() % (int)videoResolution.x;
 				carnivorePosition.y = rand() % (int)videoResolution.y;
-				entityVector.push_back(factory.createCarnivore(carnivoreSprite, carnivorePosition));
+				entityVector.push_back(factory.createCarnivore(carnivoreChildSprite, carnivoreAdultSprite, carnivorePosition));
 
 				//Setting icons
 				(entityVector.back())->setDangerSprite(dangerSprite);
@@ -212,6 +258,14 @@ void Game::handleInput()
 			if (inputEvent.key.code == Keyboard::Num2)
 			{
 				gameSpeed = 2;
+			}
+			if (inputEvent.key.code == Keyboard::Num3)
+			{
+				gameSpeed = 3;
+			}
+			if (inputEvent.key.code == Keyboard::Num4)
+			{
+				gameSpeed = 4;
 			}
 		}
 	}
@@ -276,20 +330,11 @@ void Game::updateScene()
 		ssDebugMode << "Resources: " << resourceVector.size() << std::endl << std::endl;
 		for (auto p : entityVector)
 		{
-			ssDebugMode << "Entity #:" << i << std::endl;
-			ssDebugMode << "Type:" << p->getType() << std::endl;
-			ssDebugMode << "Current position: " << p->getPosition().x << ", " << p->getPosition().y << std::endl;
-			ssDebugMode << "Next position: " << p->getNextPosition().x << ", " << p->getNextPosition().y << std::endl;
-			ssDebugMode << "Idle cooldown timer: " << p->m_IdleCooldown << std::endl;
-			ssDebugMode << "Mating cooldown timer: " << p->m_MateCooldown << std::endl;
+			ssDebugMode << "Entity #: " << i << std::endl;
+			ssDebugMode << "Type: " << p->getType() << std::endl;
+			ssDebugMode << "Sex: " << p->getSex() << std::endl;
+			ssDebugMode << "Age: " << (int)p->getAge() << std::endl;
 			ssDebugMode << "HP: " << p->getHealth() << std::endl;
-			ssDebugMode << "Priority: " << p->getPriority() << std::endl;
-			ssDebugMode << "Hunger: " << p->getHunger() << std::endl;
-			ssDebugMode << "Thirst: " << p->getThirst() << std::endl;
-			ssDebugMode << "Is thirsty:" << p->isThirsty() << std::endl;
-			ssDebugMode << "Is hungry:" << p->isHungry() << std::endl;
-			ssDebugMode << "Is in danger:" << p->isInDanger() << std::endl;
-			ssDebugMode << "Is hunting:" << p->isHunting() << std::endl << std::endl;
 			i++;
 		}
 
@@ -314,7 +359,7 @@ void Game::drawScene()
 	gameWindow.clear();
 
 	//Drawing background
-	gameWindow.draw(backgroundSprite);
+	gameWindow.draw(background, &backgroundTexture);
 
 	/*Drawing game objects*/
 	//Drawing resources

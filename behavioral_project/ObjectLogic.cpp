@@ -194,7 +194,7 @@ void ObjectLogic::interact(Time dt, std::shared_ptr<Entity> entity, std::vector<
 			}
 
 			//Reproducing
-			if (entity->isMating() && p->isMating() && distance < 20 && p->getType() == entity->getType())
+			if (entity->isMating() && p->isMating() && distance < 20 && p->getType() == entity->getType() && entity->getSex() != p->getSex())
 			{
 				if (entity->mate(dt, p))
 				{
@@ -202,7 +202,8 @@ void ObjectLogic::interact(Time dt, std::shared_ptr<Entity> entity, std::vector<
 					{
 						ObjectFactory objectFactory;
 						objectFactory.setResolution(p->m_Resolution);
-						entitiesCreated.push_back(objectFactory.createHerbivore(entity->getSprite(), entity->getPosition()));
+
+						entitiesCreated.push_back(objectFactory.createHerbivore(entity->getChildSprite(), entity->getAdultSprite(), entity->getPosition()));
 
 						//Setting icons
 						(entitiesCreated.back())->setDangerSprite(p->getDangerSprite());
@@ -214,7 +215,7 @@ void ObjectLogic::interact(Time dt, std::shared_ptr<Entity> entity, std::vector<
 					{
 						ObjectFactory objectFactory;
 						objectFactory.setResolution(p->m_Resolution);
-						entitiesCreated.push_back(objectFactory.createCarnivore(entity->getSprite(), entity->getPosition()));
+						entitiesCreated.push_back(objectFactory.createCarnivore(entity->getChildSprite(), entity->getAdultSprite(), entity->getPosition()));
 					}
 				}
 

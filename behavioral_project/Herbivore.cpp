@@ -13,14 +13,25 @@ Herbivore::Herbivore()
 	m_InternalClock = 0;
 }
 
-Herbivore::Herbivore(Sprite sprite, Vector2f position, Vector2f resolution)
+Herbivore::Herbivore(Sprite childSprite, Sprite adultSprite, std::string sex, Vector2f position, Vector2f resolution)
 {
 	m_Position = position;
 	m_NextPosition = m_Position;
 
 	m_Type = EntityType::HERBIVORE;
 
-	m_Sprite = sprite;
+	if (sex == "MALE")
+	{
+		m_EntitySex = EntitySex::MALE;
+	}
+	else
+	{
+		m_EntitySex = EntitySex::FEMALE;
+	}
+
+	m_Sprite = childSprite;
+	m_ChildSprite = childSprite;
+	m_AdultSprite = adultSprite;
 	m_Sprite.setOrigin(m_Sprite.getLocalBounds().width / 2, m_Sprite.getLocalBounds().height / 2);
 	m_Sprite.setPosition(m_Position);
 	m_Boundaries = m_Sprite.getGlobalBounds();
@@ -29,6 +40,10 @@ Herbivore::Herbivore(Sprite sprite, Vector2f position, Vector2f resolution)
 	m_Hunger = 50.0f;
 	m_Thirst = 50.0f;
 	m_ReproductionValue = 0.f;
+
+	m_Age = 0;
+	m_AgeTimer = 0.f;
+
 	m_Speed = 150;
 
 	m_IsHungry = false;
@@ -37,7 +52,9 @@ Herbivore::Herbivore(Sprite sprite, Vector2f position, Vector2f resolution)
 
 	m_IsInDanger = false;
 	m_IsHunting = false;
+
 	m_IsDead = false;
+	m_IsAdult = false;
 
 	m_FoundFood = false;
 	m_FoundWater = false;

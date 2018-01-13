@@ -8,7 +8,7 @@ class Carnivore :
 public:
 	/*Constructors and Destructor*/
 	Carnivore();
-	Carnivore(Sprite sprite, Vector2f position, Vector2f resolution);
+	Carnivore(Sprite childSprite, Sprite adultSprite, std::string sex, Vector2f position, Vector2f resolution);
 	~Carnivore();
 };
 

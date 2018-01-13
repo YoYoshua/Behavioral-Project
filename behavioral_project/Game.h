@@ -22,6 +22,7 @@ private:
 	Vector2f videoResolution;
 
 	//Background
+	VertexArray background;
 	Vector2f backgroundPosition;
 	Texture backgroundTexture;
 	Sprite backgroundSprite;
@@ -30,12 +31,14 @@ private:
 	//Herbivore
 	Vector2f herbivorePosition;
 	Texture herbivoreTexture;
-	Sprite herbivoreSprite;
+	Sprite herbivoreChildSprite;
+	Sprite herbivoreAdultSprite;
 
 	//Carnivore
 	Vector2f carnivorePosition;
 	Texture carnivoreTexture;
-	Sprite carnivoreSprite;
+	Sprite carnivoreChildSprite;
+	Sprite carnivoreAdultSprite;
 
 	//Water
 	Vector2f waterPosition;

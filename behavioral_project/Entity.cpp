@@ -35,14 +35,25 @@ Entity::Entity()
 	m_InternalClock = 0;
 }
 
-Entity::Entity(Sprite sprite, Vector2f position, Vector2f resolution)
+Entity::Entity(Sprite childSprite, Sprite adultSprite, std::string sex, Vector2f position, Vector2f resolution)
 {
 	m_Position = position;
 	m_NextPosition = m_Position;
 
 	m_Type = EntityType::UNSPECIFIED;
 
-	m_Sprite = sprite;
+	if (sex == "MALE")
+	{
+		m_EntitySex = EntitySex::MALE;
+	}
+	else
+	{
+		m_EntitySex = EntitySex::FEMALE;
+	}
+
+	m_Sprite = childSprite;
+	m_ChildSprite = childSprite;
+	m_AdultSprite = adultSprite;
 	m_Sprite.setOrigin(m_Sprite.getLocalBounds().width / 2, m_Sprite.getLocalBounds().height / 2);
 	m_Sprite.setPosition(m_Position);
 	m_Boundaries = m_Sprite.getGlobalBounds();
@@ -51,6 +62,10 @@ Entity::Entity(Sprite sprite, Vector2f position, Vector2f resolution)
 	m_Hunger = 50.0f;
 	m_Thirst = 50.0f;
 	m_ReproductionValue = 0.f;
+
+	m_Age = 0;
+	m_AgeTimer = 0.f;
+
 	m_Speed = 150;
 
 	m_IsHungry = false;
@@ -59,7 +74,9 @@ Entity::Entity(Sprite sprite, Vector2f position, Vector2f resolution)
 
 	m_IsInDanger = false;
 	m_IsHunting = false;
+
 	m_IsDead = false;
+	m_IsAdult = false;
 
 	m_FoundFood = false;
 	m_FoundWater = false;
@@ -134,6 +151,21 @@ std::string Entity::getPriority()
 	}
 }
 
+std::string Entity::getSex()
+{
+	switch (m_EntitySex)
+	{
+	case EntitySex::MALE:
+		return "MALE";
+
+	case EntitySex::FEMALE:
+		return "FEMALE";
+
+	default:
+		return "ERROR";
+	}
+}
+
 //Health
 void Entity::setHealth(float health)
 {
@@ -178,6 +210,17 @@ float Entity::getSpeed()
 	return m_Speed;
 }
 
+//Age
+void Entity::setAge(float age)
+{
+	m_Age = age;
+}
+
+float Entity::getAge()
+{
+	return m_Age;
+}
+
 //Sprite
 void Entity::setSprite(Sprite sprite)
 {
@@ -187,6 +230,16 @@ void Entity::setSprite(Sprite sprite)
 Sprite Entity::getSprite()
 {
 	return m_Sprite;
+}
+
+Sprite Entity::getAdultSprite()
+{
+	return m_AdultSprite;
+}
+
+Sprite Entity::getChildSprite()
+{
+	return m_AdultSprite;
 }
 
 //Danger Sprite
@@ -572,6 +625,16 @@ void Entity::inDanger(Time dt)
 
 	if (m_ClosestDanger != nullptr)
 	{
+		//Forget about food and water sources
+		if (m_ClosestFood != nullptr)
+		{
+			m_ClosestFood = nullptr;
+		}
+		if (m_ClosestWater != nullptr)
+		{
+			m_ClosestWater = nullptr;
+		}
+
 		relativePosition.x = this->getPosition().x - m_ClosestDanger->getPosition().x;
 		relativePosition.y = this->getPosition().y - m_ClosestDanger->getPosition().y;
 		m_NextPosition = this->getPosition() + relativePosition;
@@ -584,14 +647,7 @@ void Entity::inDanger(Time dt)
 
 void Entity::thirsty(Time dt)
 {
-	if (m_ClosestWater != nullptr)
-	{
-		m_NextPosition = m_ClosestWater->getPosition();
-	}
-	else
-	{
-		idle(dt);
-	}
+	m_NextPosition = m_ClosestWater->getPosition();
 }
 
 void Entity::hungry(Time dt)
@@ -601,7 +657,8 @@ void Entity::hungry(Time dt)
 
 void Entity::hunt(Time dt)
 {
-	if (m_ClosestPrey != nullptr)
+	//Hunting only when adult
+	if (m_ClosestPrey != nullptr && m_IsAdult)
 	{
 		m_NextPosition = m_ClosestPrey->getPosition();
 	}
@@ -618,7 +675,7 @@ void Entity::attack(Time dt, std::shared_ptr<Entity> prey)
 
 void Entity::matingCall(Time dt)
 {
-	if (m_ClosestEntity != nullptr && m_ClosestEntity->getType() == this->getType() && m_ClosestEntity->isMating())
+	if (m_ClosestEntity != nullptr && m_ClosestEntity->getType() == this->getType() && m_ClosestEntity->getPriority() == "MATING" && this->getSex() != m_ClosestEntity->getSex())
 	{
 		m_NextPosition = m_ClosestEntity->getPosition();
 	}
@@ -646,7 +703,7 @@ bool Entity::mate(Time dt, std::shared_ptr<Entity> partner)
 	if (m_MateCooldown <= 0.f)
 	{
 		//finish mating
-		m_MateCooldown = 5.f;
+		m_MateCooldown = 2.f;
 		this->m_ReproductionValue = 0.f;
 		partner->m_ReproductionValue = 0.f;
 		return true;
@@ -665,7 +722,56 @@ void Entity::updateParameters(Time dt)
 	//Changing parameters with passing time
 	m_Hunger = m_Hunger + dt.asSeconds();
 	m_Thirst = m_Thirst + dt.asSeconds() / 2;
-	m_ReproductionValue = m_ReproductionValue + dt.asSeconds() * 4;
+
+	//Raising reproduction value for adults
+	if (m_IsAdult)
+	{
+		m_ReproductionValue = m_ReproductionValue + dt.asSeconds() * 4;
+	}
+
+	//Aging
+	m_AgeTimer = m_AgeTimer + dt.asSeconds();
+
+	//Updating age every 60 seconds
+	if (m_AgeTimer >= 60.f)
+	{
+		m_Age = m_Age + 1;
+		m_AgeTimer = 0.f;
+
+		//Adulthood at age 5
+		if (m_Age == 3 && !m_IsAdult)
+		{
+			m_IsAdult = true;
+
+			m_AdultSprite.setPosition(m_Sprite.getPosition());
+			m_AdultSprite.setOrigin(m_AdultSprite.getLocalBounds().width / 2, m_AdultSprite.getLocalBounds().height / 2);
+			m_Sprite = m_AdultSprite;
+		}
+
+		//Random chance of dying of age
+		float value = (float)rand() / RAND_MAX;
+
+		if (m_Age < 5 && value < 0.01) //Chance of dying is 1% at age [0, 5]
+		{
+			death();
+		}
+		else if (m_Age >= 5 && m_Age < 10 && value < 0.05) //Chance of dying is 5% at age [5, 10]
+		{
+			death();
+		}
+		else if (m_Age >= 10 && m_Age < 20 && value < 0.25) //Chance of dying is 25% at age [10, 20]
+		{
+			death();
+		}
+		else if (m_Age >= 20 && m_Age < 30 && value < 0.5) //Chance of dying is 50% at age [20, 30]
+		{
+			death();
+		}
+		else if (m_Age > 30 && value < 0.95) //Chance of dying is 95% at age below 30
+		{
+			death();
+		}
+	}
 
 	//Updating speed parameter according to hunger and thirst
 	m_Speed = DEFAULT_SPEED - ((int)m_Hunger - 50) - ((int)m_Thirst - 50);
@@ -766,23 +872,8 @@ void Entity::updatePriority()
 
 }
 
-void Entity::update(Time dt)
+void Entity::updatePosition(Time dt)
 {
-	//Updating internal clock
-	m_InternalClock = m_InternalClock + dt.asSeconds();
-
-	//Updating entity parameters
-	updateParameters(dt);
-
-	//Setting actual state
-	stateChange();
-
-	//Updating entity priority
-	updatePriority();
-
-	//Setting behaviour
-	behaviour(dt);
-
 	//Updating position according to the m_NextPosition parameter
 	if (m_NextPosition.x >= m_Resolution.x || m_NextPosition.x < 0)
 	{
@@ -803,7 +894,7 @@ void Entity::update(Time dt)
 		{
 			m_Direction = EntityDirection::RIGHT;
 		}
-		else if(m_NextPosition.x < getPosition().x && abs(m_NextPosition.x - getPosition().x) > 5.f)
+		else if (m_NextPosition.x < getPosition().x && abs(m_NextPosition.x - getPosition().x) > 5.f)
 		{
 			m_Direction = EntityDirection::LEFT;
 		}
@@ -846,4 +937,25 @@ void Entity::update(Time dt)
 
 		m_VisionCircle.setPosition(getPosition() - movementStep);
 	}
+}
+
+void Entity::update(Time dt)
+{
+	//Updating internal clock
+	m_InternalClock = m_InternalClock + dt.asSeconds();
+
+	//Updating entity parameters
+	updateParameters(dt);
+
+	//Setting actual state
+	stateChange();
+
+	//Updating entity priority
+	updatePriority();
+
+	//Setting behaviour
+	behaviour(dt);
+
+	//Updating position
+	updatePosition(dt);
 }
