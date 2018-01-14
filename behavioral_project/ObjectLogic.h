@@ -12,6 +12,9 @@
 class ObjectLogic
 {
 private:
+	//Main object factory
+	ObjectFactory* m_Factory;
+
 	Vector2f m_PositionVector;
 	float m_Length;
 	Vector2f m_RelativePosition;
@@ -42,5 +45,8 @@ public:
 	void checkResources(std::shared_ptr<Entity> entity, std::vector<std::shared_ptr<Resource>> &resourceVector);
 	void interact(Time dt, std::shared_ptr<Entity> entityOne, std::vector<std::shared_ptr<Entity>> &entitiesNoticed, 
 		std::vector<std::shared_ptr<Resource>> &resourcesNoticed);
+
+	//Setters
+	void setFactory(ObjectFactory* factory);
 };
 

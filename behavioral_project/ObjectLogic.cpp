@@ -193,6 +193,28 @@ void ObjectLogic::interact(Time dt, std::shared_ptr<Entity> entity, std::vector<
 				entity->attack(dt, p);
 			}
 
+			//Sharing informations
+			if (entity->getType() == p->getType())
+			{
+				//About water
+				if (entity->getClosestWater() != nullptr && p->getClosestWater() == nullptr)
+				{
+					p->setClosestWater(entity->getClosestWater());
+				}
+				
+				//About food
+				if (entity->getClosestFood() != nullptr && p->getClosestFood() == nullptr)
+				{
+					p->setClosestFood(entity->getClosestFood());
+				}
+
+				//About danger
+				if (entity->getClosestDanger() != nullptr && p->getClosestDanger() == nullptr)
+				{
+					p->setClosestDanger(entity->getClosestDanger());
+				}
+			}
+
 			//Reproducing
 			if (entity->isMating() && p->isMating() && distance < 20 && p->getType() == entity->getType() && entity->getSex() != p->getSex())
 			{
@@ -200,10 +222,7 @@ void ObjectLogic::interact(Time dt, std::shared_ptr<Entity> entity, std::vector<
 				{
 					if (entity->getType() == "HERBIVORE")
 					{
-						ObjectFactory objectFactory;
-						objectFactory.setResolution(p->m_Resolution);
-
-						entitiesCreated.push_back(objectFactory.createHerbivore(entity->getChildSprite(), entity->getAdultSprite(), entity->getPosition()));
+						entitiesCreated.push_back(m_Factory->createHerbivore(entity->getPosition()));
 
 						//Setting icons
 						(entitiesCreated.back())->setDangerSprite(p->getDangerSprite());
@@ -213,9 +232,13 @@ void ObjectLogic::interact(Time dt, std::shared_ptr<Entity> entity, std::vector<
 					}
 					else if (entity->getType() == "CARNIVORE")
 					{
-						ObjectFactory objectFactory;
-						objectFactory.setResolution(p->m_Resolution);
-						entitiesCreated.push_back(objectFactory.createCarnivore(entity->getChildSprite(), entity->getAdultSprite(), entity->getPosition()));
+						entitiesCreated.push_back(m_Factory->createCarnivore(entity->getPosition()));
+
+						//Setting icons
+						(entitiesCreated.back())->setDangerSprite(p->getDangerSprite());
+						(entitiesCreated.back())->setHungerSprite(p->getHungerSprite());
+						(entitiesCreated.back())->setThirstySprite(p->getThirstySprite());
+						(entitiesCreated.back())->setMatingSprite(p->getMatingSprite());
 					}
 				}
 
@@ -250,4 +273,9 @@ void ObjectLogic::interact(Time dt, std::shared_ptr<Entity> entity, std::vector<
 
 		}
 	}
+}
+
+void ObjectLogic::setFactory(ObjectFactory * factory)
+{
+	m_Factory = factory;
 }

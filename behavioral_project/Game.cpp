@@ -14,21 +14,16 @@ void Game::initialiseVariables()
 	/*Engine variables initialisation*/
 
 	//Game states initialisation
-	state = State::PLAYING;
+	state = State::SPLASH;
 
 	//Debug mode initialisation
 	debugModeActive = 0;
-
-	//Clock initialisation
 
 	/*Video initialisation*/
 
 	//Getting resolution parameters
 	videoResolution.x = VideoMode::getDesktopMode().width;
 	videoResolution.y = VideoMode::getDesktopMode().height;
-
-	//Passing resolution to the ObjectFactory
-	factory.setResolution(videoResolution);
 
 	//Game window
 	gameWindow.create(VideoMode(videoResolution.x, videoResolution.y), "BP", Style::Fullscreen);
@@ -46,42 +41,30 @@ void Game::initialiseVariables()
 	fpsText.setFont(debugFont);
 	fpsText.setPosition(videoResolution.x - 80, 40);
 
-	/*Game objects initialisation*/
-	Vector2i origin(0, 0);
-	Vector2i size(76, 56);
-	IntRect rectangle(origin, size);
+	/*Splashscreen and menu*/
+	//Splashscreen
+	splashscreenTexture.loadFromFile("graphics/splashscreen.png");
+	splashscreenSprite.setTexture(splashscreenTexture);
 
+	splashscreenSprite.setScale(videoResolution.x / splashscreenSprite.getLocalBounds().width, 
+		videoResolution.x / splashscreenSprite.getLocalBounds().width);  //Scale according to resolution
+
+	splashscreenSprite.setOrigin(splashscreenSprite.getLocalBounds().width / 2, splashscreenSprite.getLocalBounds().height / 2);
+	splashscreenSprite.setPosition(videoResolution.x / 2, videoResolution.y / 2);
+	splashscreenSprite.setColor(sf::Color(255, 255, 255, alpha));
+
+	/*Game objects initialisation*/
 	//Herbivore
 	herbivorePosition.x = videoResolution.x / 2;
 	herbivorePosition.y = videoResolution.y / 2;
 
 	herbivoreTexture.loadFromFile("graphics/cow.png");
 
-	herbivoreChildSprite.setTexture(herbivoreTexture);
-	herbivoreChildSprite.setTextureRect(rectangle);
-
-	rectangle.top = 56;
-
-	herbivoreAdultSprite.setTexture(herbivoreTexture);
-	herbivoreAdultSprite.setTextureRect(rectangle);
-
 	//Carnivore
-	rectangle.top = 0;
-	rectangle.width = 78;
-
 	carnivorePosition.x = videoResolution.x / 2;
 	carnivorePosition.y = videoResolution.y / 2;
 
 	carnivoreTexture.loadFromFile("graphics/lion.png");
-
-	carnivoreChildSprite.setTexture(carnivoreTexture);
-	carnivoreChildSprite.setTextureRect(rectangle);
-
-	rectangle.top = 56;
-	rectangle.height = 66;
-
-	carnivoreAdultSprite.setTexture(carnivoreTexture);
-	carnivoreAdultSprite.setTextureRect(rectangle);
 	
 	//Water
 	waterPosition.x = videoResolution.x / 2;
@@ -143,10 +126,7 @@ void Game::initialiseVariables()
 	needsTexture.loadFromFile("graphics/needs.png");
 
 	//Danger
-	rectangle.left = 0;
-	rectangle.top = 0;
-	rectangle.width = 20;
-	rectangle.height = 20;
+	IntRect rectangle(0, 0, 20, 20);
 
 	dangerSprite.setTexture(needsTexture);
 	dangerSprite.setTextureRect(rectangle);
@@ -172,6 +152,15 @@ void Game::initialiseVariables()
 	//Game speed
 	gameSpeed = 1;
 
+	/*Object factory*/
+	//Set factory
+	factory.setTextures(&herbivoreTexture, &carnivoreTexture);
+	factory.setResolution(videoResolution);
+
+	/*Object logic*/
+	//Assign factory
+	logic.setFactory(&factory);
+
 }
 
 void Game::handleInput()
@@ -183,89 +172,115 @@ void Game::handleInput()
 	{
 		if (inputEvent.type == Event::KeyPressed)
 		{
-			//Toggling Debug Mode
-			if (inputEvent.key.code == Keyboard::F1 && debugModeActive == 1)
+			//Splashscreen
+			if (state == State::SPLASH)
 			{
-				debugModeActive = 0;
+				if (inputEvent.key.code == Keyboard::Return && fadein)
+				{
+					fadein = false;
+				}
+				else if (inputEvent.key.code == Keyboard::Return && !fadein)
+				{
+					fadeout = true;
+				}
 			}
-			else if (inputEvent.key.code == Keyboard::F1 && debugModeActive == 0)
+			//Menu
+			if (state == State::MENU)
 			{
-				debugModeActive = 1;
-			}
-
-			//Creating new herbivore objects
-			if (inputEvent.key.code == Keyboard::H)
-			{
-				srand((int)time(0) * dt.asMilliseconds() + 1 * 800 * entityVector.size() + 5);
-				herbivorePosition.x = rand() % (int)videoResolution.x;
-				herbivorePosition.y = rand() % (int)videoResolution.y;
-				entityVector.push_back(factory.createHerbivore(herbivoreChildSprite, herbivoreAdultSprite, herbivorePosition));
-
-				//Setting icons
-				(entityVector.back())->setDangerSprite(dangerSprite);
-				(entityVector.back())->setHungerSprite(hungrySprite);
-				(entityVector.back())->setThirstySprite(thirstySprite);
-				(entityVector.back())->setMatingSprite(matingSprite);
+				//TODO
 			}
 
-			//Creating new carnivore objects
-			if (inputEvent.key.code == Keyboard::C)
+			//Game
+			if (state == State::PLAYING)
 			{
-				srand((int)time(0) * dt.asMilliseconds() + 1 * 850 * entityVector.size() + 5);
-				carnivorePosition.x = rand() % (int)videoResolution.x;
-				carnivorePosition.y = rand() % (int)videoResolution.y;
-				entityVector.push_back(factory.createCarnivore(carnivoreChildSprite, carnivoreAdultSprite, carnivorePosition));
+				//Toggling Debug Mode
+				if (inputEvent.key.code == Keyboard::F1 && debugModeActive == 1)
+				{
+					debugModeActive = 0;
+				}
+				else if (inputEvent.key.code == Keyboard::F1 && debugModeActive == 0)
+				{
+					debugModeActive = 1;
+				}
 
-				//Setting icons
-				(entityVector.back())->setDangerSprite(dangerSprite);
-				(entityVector.back())->setHungerSprite(hungrySprite);
-				(entityVector.back())->setThirstySprite(thirstySprite);
-				(entityVector.back())->setMatingSprite(matingSprite);
-			}
+				//Creating new herbivore objects
+				if (inputEvent.key.code == Keyboard::H)
+				{
+					srand((int)time(0) * dt.asMilliseconds() + 1 * 800 * entityVector.size() + 5);
+					herbivorePosition.x = rand() % (int)videoResolution.x;
+					herbivorePosition.y = rand() % (int)videoResolution.y;
+					entityVector.push_back(factory.createHerbivore(herbivorePosition));
 
-			//Creating new water objects
-			if (inputEvent.key.code == Keyboard::W)
-			{
-				srand((int)time(0) * dt.asMilliseconds() + 1 * 900 * resourceVector.size() + 5);
-				waterPosition.x = rand() % (int)videoResolution.x;
-				waterPosition.y = rand() % (int)videoResolution.y;
-				resourceVector.push_back(factory.createWater(waterSprite, waterPosition));
-			}
+					//Setting icons
+					(entityVector.back())->setDangerSprite(dangerSprite);
+					(entityVector.back())->setHungerSprite(hungrySprite);
+					(entityVector.back())->setThirstySprite(thirstySprite);
+					(entityVector.back())->setMatingSprite(matingSprite);
+				}
 
-			//Creating new plant objects
-			if (inputEvent.key.code == Keyboard::P)
-			{
-				srand((int)time(0) * dt.asMilliseconds() + 1 * 1234 * resourceVector.size() + 5);
-				plantPosition.x = rand() % (int)videoResolution.x;
-				plantPosition.y = rand() % (int)videoResolution.y;
-				resourceVector.push_back(factory.createPlant(plantSprite, plantPosition));
-			}
+				//Creating new carnivore objects
+				if (inputEvent.key.code == Keyboard::C)
+				{
+					srand((int)time(0) * dt.asMilliseconds() + 1 * 850 * entityVector.size() + 5);
+					carnivorePosition.x = rand() % (int)videoResolution.x;
+					carnivorePosition.y = rand() % (int)videoResolution.y;
+					entityVector.push_back(factory.createCarnivore(carnivorePosition));
 
-			//Creating new meat objects
-			if (inputEvent.key.code == Keyboard::M)
-			{
-				srand((int)time(0) * dt.asMilliseconds() + 1 * 413 * resourceVector.size() + 5);
-				meatPosition.x = rand() % (int)videoResolution.x;
-				meatPosition.y = rand() % (int)videoResolution.y;
-				resourceVector.push_back(factory.createMeat(meatSprite, meatPosition));
-			}
+					//Setting icons
+					(entityVector.back())->setDangerSprite(dangerSprite);
+					(entityVector.back())->setHungerSprite(hungrySprite);
+					(entityVector.back())->setThirstySprite(thirstySprite);
+					(entityVector.back())->setMatingSprite(matingSprite);
+				}
 
-			//Changing game speed
-			if (inputEvent.key.code == Keyboard::Num1)
-			{
-				gameSpeed = 1;
-			}
-			if (inputEvent.key.code == Keyboard::Num2)
-			{
-				gameSpeed = 2;
-			}
-			if (inputEvent.key.code == Keyboard::Num3)
-			{
-				gameSpeed = 3;
-			}
-			if (inputEvent.key.code == Keyboard::Num4)
-			{
-				gameSpeed = 4;
+				//Creating new water objects
+				if (inputEvent.key.code == Keyboard::W)
+				{
+					srand((int)time(0) * dt.asMilliseconds() + 1 * 900 * resourceVector.size() + 5);
+					waterPosition.x = rand() % (int)videoResolution.x;
+					waterPosition.y = rand() % (int)videoResolution.y;
+					resourceVector.push_back(factory.createWater(waterSprite, waterPosition));
+				}
+
+				//Creating new plant objects
+				if (inputEvent.key.code == Keyboard::P)
+				{
+					srand((int)time(0) * dt.asMilliseconds() + 1 * 1234 * resourceVector.size() + 5);
+					plantPosition.x = rand() % (int)videoResolution.x;
+					plantPosition.y = rand() % (int)videoResolution.y;
+					resourceVector.push_back(factory.createPlant(plantSprite, plantPosition));
+				}
+
+				//Creating new meat objects
+				if (inputEvent.key.code == Keyboard::M)
+				{
+					srand((int)time(0) * dt.asMilliseconds() + 1 * 413 * resourceVector.size() + 5);
+					meatPosition.x = rand() % (int)videoResolution.x;
+					meatPosition.y = rand() % (int)videoResolution.y;
+					resourceVector.push_back(factory.createMeat(meatSprite, meatPosition));
+				}
+
+				//Changing game speed
+				if (inputEvent.key.code == Keyboard::Num0)
+				{
+					gameSpeed = 0;
+				}
+				if (inputEvent.key.code == Keyboard::Num1)
+				{
+					gameSpeed = 1;
+				}
+				if (inputEvent.key.code == Keyboard::Num2)
+				{
+					gameSpeed = 2;
+				}
+				if (inputEvent.key.code == Keyboard::Num3)
+				{
+					gameSpeed = 3;
+				}
+				if (inputEvent.key.code == Keyboard::Num4)
+				{
+					gameSpeed = 4;
+				}
 			}
 		}
 	}
@@ -287,67 +302,70 @@ void Game::updateScene()
 	dt = clock.restart() * gameSpeed;
 
 	/*Updating game objects*/
-	//Getting vector sizes
-	eVectorSize = entityVector.size();
-	rVectorSize = resourceVector.size();
-
-	//Updating entity vector
-	for (auto p : entityVector)
+	if (state == State::PLAYING)
 	{
-		p->update(dt);
-	}
+		//Getting vector sizes
+		eVectorSize = entityVector.size();
+		rVectorSize = resourceVector.size();
 
-	//Updating resource vector
-	for (auto p : resourceVector)
-	{
-		p->update(dt);
-	}
-	//Cleaning dead objects
-	factory.clean(entityVector, resourceVector);
-
-	//Processing object logic
-	logic.processLogic(dt, entityVector, resourceVector);
-
-	/*DEBUG MODE*/
-
-	//Refreshing vector size
-	eVectorSize = entityVector.size();
-	rVectorSize = resourceVector.size();
-
-	//Constructing and setting stringstream for FPS text display
-	std::stringstream ssFPS;
-
-	ssFPS << "FPS: " << 1.f / dt.asSeconds() << std::endl;
-	fpsText.setString(ssFPS.str());
-
-	//Constructing and setting stringstream for Debug Mode text display
-	std::stringstream ssDebugMode;
-
-	if (debugModeActive)
-	{
-		int i = 0;
-		ssDebugMode << "Entities: " << entityVector.size() << std::endl;
-		ssDebugMode << "Resources: " << resourceVector.size() << std::endl << std::endl;
+		//Updating entity vector
 		for (auto p : entityVector)
 		{
-			ssDebugMode << "Entity #: " << i << std::endl;
-			ssDebugMode << "Type: " << p->getType() << std::endl;
-			ssDebugMode << "Sex: " << p->getSex() << std::endl;
-			ssDebugMode << "Age: " << (int)p->getAge() << std::endl;
-			ssDebugMode << "HP: " << p->getHealth() << std::endl;
-			i++;
+			p->update(dt);
 		}
 
-		i = 0;
+		//Updating resource vector
 		for (auto p : resourceVector)
 		{
-			ssDebugMode << "Resource #:" << i << std::endl;
-			ssDebugMode << "Type:" << p->getType() << std::endl;
-			ssDebugMode << "Current position: " << p->getPosition().x << ", " << p->getPosition().y << std::endl << std::endl;
-			i++;
+			p->update(dt);
 		}
+		//Cleaning dead objects
+		factory.clean(entityVector, resourceVector);
 
-		debugText.setString(ssDebugMode.str());
+		//Processing object logic
+		logic.processLogic(dt, entityVector, resourceVector);
+
+		/*DEBUG MODE*/
+
+		//Refreshing vector size
+		eVectorSize = entityVector.size();
+		rVectorSize = resourceVector.size();
+
+		//Constructing and setting stringstream for FPS text display
+		std::stringstream ssFPS;
+
+		ssFPS << "FPS: " << 1.f / dt.asSeconds() << std::endl;
+		fpsText.setString(ssFPS.str());
+
+		//Constructing and setting stringstream for Debug Mode text display
+		std::stringstream ssDebugMode;
+
+		if (debugModeActive)
+		{
+			int i = 0;
+			ssDebugMode << "Entities: " << entityVector.size() << std::endl;
+			ssDebugMode << "Resources: " << resourceVector.size() << std::endl << std::endl;
+			for (auto p : entityVector)
+			{
+				ssDebugMode << "Entity #: " << i << std::endl;
+				ssDebugMode << "Type: " << p->getType() << std::endl;
+				ssDebugMode << "Sex: " << p->getSex() << std::endl;
+				ssDebugMode << "Age: " << (int)p->getAge() << std::endl;
+				ssDebugMode << "HP: " << p->getHealth() << std::endl;
+				i++;
+			}
+
+			i = 0;
+			for (auto p : resourceVector)
+			{
+				ssDebugMode << "Resource #:" << i << std::endl;
+				ssDebugMode << "Type:" << p->getType() << std::endl;
+				ssDebugMode << "Current position: " << p->getPosition().x << ", " << p->getPosition().y << std::endl << std::endl;
+				i++;
+			}
+
+			debugText.setString(ssDebugMode.str());
+		}
 	}
 }
 
@@ -358,57 +376,99 @@ void Game::drawScene()
 	//Clearing scene
 	gameWindow.clear();
 
-	//Drawing background
-	gameWindow.draw(background, &backgroundTexture);
-
-	/*Drawing game objects*/
-	//Drawing resources
-	for (auto p : resourceVector)
+	//Draw splashscreen
+	if (state == State::SPLASH)
 	{
-		gameWindow.draw(p->getSprite());
+		filterTimer += dt.asSeconds();
+		//Fade in
+		if (!fadeout && (alpha < 255) && filterTimer >= filterDelay)
+		{
+			alpha += 1;
+			splashscreenSprite.setColor(sf::Color(255, 255, 255, alpha));
+			filterTimer = 0.f;
+		}
+		//Finishing fade in
+		if (fadein && alpha == 255)
+		{
+			fadein = false;
+		}
+		//Skipping fade in
+		if (!fadein && !fadeout)
+		{
+			alpha = 255;
+			splashscreenSprite.setColor(sf::Color(255, 255, 255, alpha));
+			filterTimer = 0.f;
+		}
+		//Fade out
+		else if (fadeout && alpha > 0 && filterTimer >= filterDelay)
+		{
+			alpha -= 1;
+			splashscreenSprite.setColor(sf::Color(255, 255, 255, alpha));
+			filterTimer = 0.f;
+		}
+		else if (fadeout && alpha == 0)
+		{
+			state = State::PLAYING;
+		}
+
+		gameWindow.draw(splashscreenSprite);
+	}
+
+	//Draw game
+	else if (state == State::PLAYING)
+	{
+		//Drawing background
+		gameWindow.draw(background, &backgroundTexture);
+
+		/*Drawing game objects*/
+		//Drawing resources
+		for (auto p : resourceVector)
+		{
+			gameWindow.draw(p->getSprite());
+			if (debugModeActive)
+			{
+				gameWindow.draw(p->getCircleShape());
+			}
+		}
+
+		//Drawing entities
+		for (auto p : entityVector)
+		{
+			gameWindow.draw(p->getSprite());
+			if (debugModeActive)
+			{
+				gameWindow.draw(p->getCircleShape());
+			}
+
+			//Drawing icon
+			std::string priority;
+			priority = p->getPriority();
+
+			if (priority == "DANGER")
+			{
+				gameWindow.draw(p->getDangerSprite());
+			}
+			else if (priority == "THIRSTY")
+			{
+				gameWindow.draw(p->getThirstySprite());
+			}
+			else if (priority == "HUNGRY")
+			{
+				gameWindow.draw(p->getHungerSprite());
+			}
+			else if (priority == "MATING")
+			{
+				gameWindow.draw(p->getMatingSprite());
+			}
+		}
+		//Drawing text on scene
 		if (debugModeActive)
 		{
-			gameWindow.draw(p->getCircleShape());
+			gameWindow.draw(debugText);
 		}
+
+		gameWindow.draw(fpsText);
 	}
-
-	//Drawing entities
-	for (auto p : entityVector)
-	{
-		gameWindow.draw(p->getSprite());
-		if (debugModeActive)
-		{
-			gameWindow.draw(p->getCircleShape());
-		}
-
-		//Drawing icon
-		std::string priority;
-		priority = p->getPriority();
-
-		if (priority == "DANGER")
-		{
-			gameWindow.draw(p->getDangerSprite());
-		}
-		else if (priority == "THIRSTY")
-		{
-			gameWindow.draw(p->getThirstySprite());
-		}
-		else if (priority == "HUNGRY")
-		{
-			gameWindow.draw(p->getHungerSprite());
-		}
-		else if (priority == "MATING")
-		{
-			gameWindow.draw(p->getMatingSprite());
-		}
-	}
-	//Drawing text on scene
-	if (debugModeActive)
-	{
-		gameWindow.draw(debugText);
-	}
-
-	gameWindow.draw(fpsText);
 	
 	//Displaying scene
 	gameWindow.display();

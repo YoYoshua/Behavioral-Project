@@ -12,7 +12,7 @@ private:
 	/*State related variables*/
 	enum class State
 	{
-		PLAYING
+		SPLASH, MENU, PLAYING
 	};
 	
 	State state;
@@ -27,18 +27,24 @@ private:
 	Texture backgroundTexture;
 	Sprite backgroundSprite;
 
+	//Splashscreen
+	Texture splashscreenTexture;
+	Sprite splashscreenSprite;
+
+	int alpha = 0;
+	float filterTimer = 0.f;
+	float filterDelay = 0.005;
+	bool fadein = true;
+	bool fadeout = false;
+
 	/*Object related variables*/
 	//Herbivore
 	Vector2f herbivorePosition;
 	Texture herbivoreTexture;
-	Sprite herbivoreChildSprite;
-	Sprite herbivoreAdultSprite;
 
 	//Carnivore
 	Vector2f carnivorePosition;
 	Texture carnivoreTexture;
-	Sprite carnivoreChildSprite;
-	Sprite carnivoreAdultSprite;
 
 	//Water
 	Vector2f waterPosition;
