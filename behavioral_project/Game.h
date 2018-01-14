@@ -12,7 +12,7 @@ private:
 	/*State related variables*/
 	enum class State
 	{
-		SPLASH, MENU, PLAYING
+		SPLASH, MENU, PLAYING, HELP
 	};
 	
 	State state;
@@ -36,6 +36,14 @@ private:
 	float filterDelay = 0.005;
 	bool fadein = true;
 	bool fadeout = false;
+
+	//Menu
+	bool backgroundObjectsCleared = false;
+
+	//Help
+	Texture helpTexture;
+	Sprite helpSprite;
+	Text thanksText;
 
 	/*Object related variables*/
 	//Herbivore
@@ -73,9 +81,17 @@ private:
 	Sprite matingSprite;
 
 	/*Text related variables*/
+	//Debug
 	Font debugFont;
 	Text debugText;
 	Text fpsText;
+
+	//Menu
+	Font menuFont;
+	Text titleText;
+	Text playText;
+	Text helpText;
+	Text exitText;
 
 	/*Event and clock related variables*/
 	Event inputEvent;
@@ -101,5 +117,7 @@ public:
 	void handleInput();
 	void updateScene();
 	void drawScene();
+
+	bool isPointOverText(const sf::Vector2f Position, const Text &Text);
 };
 

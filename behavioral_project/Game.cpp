@@ -11,6 +11,9 @@ Game::~Game()
 
 void Game::initialiseVariables()
 {
+	//Rectangle for sprites
+	IntRect rectangle(0, 0, 0, 0);
+
 	/*Engine variables initialisation*/
 
 	//Game states initialisation
@@ -28,6 +31,85 @@ void Game::initialiseVariables()
 	//Game window
 	gameWindow.create(VideoMode(videoResolution.x, videoResolution.y), "BP", Style::Fullscreen);
 
+	/*Splashscreen and menu*/
+	//Splashscreen
+	splashscreenTexture.loadFromFile("graphics/splashscreen.png");
+	splashscreenSprite.setTexture(splashscreenTexture);
+
+	splashscreenSprite.setScale(videoResolution.x / splashscreenSprite.getLocalBounds().width,
+		videoResolution.x / splashscreenSprite.getLocalBounds().width);  //Scale according to resolution
+
+	splashscreenSprite.setOrigin(splashscreenSprite.getLocalBounds().width / 2, splashscreenSprite.getLocalBounds().height / 2);
+	splashscreenSprite.setPosition(videoResolution.x / 2, videoResolution.y / 2);
+	splashscreenSprite.setColor(sf::Color(255, 255, 255, alpha));
+
+	//Menu
+	menuFont.loadFromFile("font/ARCADECLASSIC.ttf");
+
+
+	//Title
+	titleText.setFont(menuFont);
+	titleText.setString("ECOSIM");
+	titleText.setCharacterSize(150);
+
+	titleText.setOutlineColor(Color::Black);
+	titleText.setOutlineThickness(2);
+	titleText.setFillColor(Color::White);
+
+	titleText.setOrigin(titleText.getLocalBounds().width / 2, titleText.getLocalBounds().height / 2);
+	titleText.setPosition(videoResolution.x / 2, videoResolution.y / 5);
+
+	//Play buttons
+	playText.setFont(menuFont);
+	playText.setString("PLAY");
+	playText.setCharacterSize(100);
+
+	playText.setFillColor(Color::White);
+
+	playText.setOrigin(playText.getLocalBounds().width / 2, playText.getLocalBounds().height / 2);
+	playText.setPosition(videoResolution.x / 2, videoResolution.y / 2);
+
+	//Help buttons
+	helpText.setFont(menuFont);
+	helpText.setString("HELP");
+	helpText.setCharacterSize(100);
+
+	helpText.setFillColor(Color::White);
+
+	helpText.setOrigin(helpText.getLocalBounds().width / 2, helpText.getLocalBounds().height / 2);
+	helpText.setPosition(videoResolution.x / 2, playText.getPosition().y + 100);
+
+	//Exit buttons
+	exitText.setFont(menuFont);
+	exitText.setString("EXIT");
+	exitText.setCharacterSize(100);
+
+	exitText.setFillColor(Color::White);
+
+	exitText.setOrigin(exitText.getLocalBounds().width / 2, exitText.getLocalBounds().height / 2);
+	exitText.setPosition(videoResolution.x / 2, helpText.getPosition().y + 100);
+
+	/*Help*/
+	//Help sprite
+	helpTexture.loadFromFile("graphics/help.png");
+	helpSprite.setTexture(helpTexture);
+
+	helpSprite.setScale(videoResolution.x / helpSprite.getLocalBounds().width,
+		videoResolution.x /helpSprite.getLocalBounds().width);  //Scale according to resolution
+
+	helpSprite.setOrigin(helpSprite.getLocalBounds().width / 2, helpSprite.getLocalBounds().height / 2);
+	helpSprite.setPosition(videoResolution.x / 2, videoResolution.y / 2);
+
+	//Thanks button
+	thanksText.setFont(menuFont);
+	thanksText.setString("THANKS!");
+	thanksText.setCharacterSize(100);
+
+	thanksText.setFillColor(Color::White);
+
+	thanksText.setOrigin(thanksText.getLocalBounds().width / 2, thanksText.getLocalBounds().height / 2);
+	thanksText.setPosition(videoResolution.x / 2, 4*(videoResolution.y/5));
+
 	/*Text initialsation*/
 	//Constructing and setting Font objects
 	debugFont.loadFromFile("font/lucon.ttf");
@@ -40,18 +122,6 @@ void Game::initialiseVariables()
 	fpsText.setCharacterSize(10);
 	fpsText.setFont(debugFont);
 	fpsText.setPosition(videoResolution.x - 80, 40);
-
-	/*Splashscreen and menu*/
-	//Splashscreen
-	splashscreenTexture.loadFromFile("graphics/splashscreen.png");
-	splashscreenSprite.setTexture(splashscreenTexture);
-
-	splashscreenSprite.setScale(videoResolution.x / splashscreenSprite.getLocalBounds().width, 
-		videoResolution.x / splashscreenSprite.getLocalBounds().width);  //Scale according to resolution
-
-	splashscreenSprite.setOrigin(splashscreenSprite.getLocalBounds().width / 2, splashscreenSprite.getLocalBounds().height / 2);
-	splashscreenSprite.setPosition(videoResolution.x / 2, videoResolution.y / 2);
-	splashscreenSprite.setColor(sf::Color(255, 255, 255, alpha));
 
 	/*Game objects initialisation*/
 	//Herbivore
@@ -126,7 +196,10 @@ void Game::initialiseVariables()
 	needsTexture.loadFromFile("graphics/needs.png");
 
 	//Danger
-	IntRect rectangle(0, 0, 20, 20);
+	rectangle.top = 0;
+	rectangle.left = 0;
+	rectangle.height = 20;
+	rectangle.width = 20;
 
 	dangerSprite.setTexture(needsTexture);
 	dangerSprite.setTextureRect(rectangle);
@@ -161,6 +234,55 @@ void Game::initialiseVariables()
 	//Assign factory
 	logic.setFactory(&factory);
 
+	/*Creating objects for menu*/
+	//Herbivores
+	for (int i = 0; i <= 2; i++)
+	{
+		//Herbivores
+		srand((int)time(0) * dt.asMilliseconds() + 1 * 800 * entityVector.size() + 5);
+		herbivorePosition.x = rand() % (int)videoResolution.x;
+		herbivorePosition.y = rand() % (int)videoResolution.y;
+		entityVector.push_back(factory.createHerbivore(herbivorePosition));
+
+		//Setting icons
+		(entityVector.back())->setDangerSprite(dangerSprite);
+		(entityVector.back())->setHungerSprite(hungrySprite);
+		(entityVector.back())->setThirstySprite(thirstySprite);
+		(entityVector.back())->setMatingSprite(matingSprite);
+
+		//Carnivores
+		srand((int)time(0) * dt.asMilliseconds() + 1 * 850 * entityVector.size() + 5);
+		carnivorePosition.x = rand() % (int)videoResolution.x;
+		carnivorePosition.y = rand() % (int)videoResolution.y;
+		entityVector.push_back(factory.createCarnivore(carnivorePosition));
+
+		//Setting icons
+		(entityVector.back())->setDangerSprite(dangerSprite);
+		(entityVector.back())->setHungerSprite(hungrySprite);
+		(entityVector.back())->setThirstySprite(thirstySprite);
+		(entityVector.back())->setMatingSprite(matingSprite);
+
+		//Plants
+		srand((int)time(0) * dt.asMilliseconds() + 1 * 1234 * resourceVector.size() + 5);
+		plantPosition.x = rand() % (int)videoResolution.x;
+		plantPosition.y = rand() % (int)videoResolution.y;
+		resourceVector.push_back(factory.createPlant(plantSprite, plantPosition));
+
+		//Water
+		srand((int)time(0) * dt.asMilliseconds() + 1 * 900 * resourceVector.size() + 5);
+		waterPosition.x = rand() % (int)videoResolution.x;
+		waterPosition.y = rand() % (int)videoResolution.y;
+		resourceVector.push_back(factory.createWater(waterSprite, waterPosition));
+
+		//Meat
+		srand((int)time(0) * dt.asMilliseconds() + 1 * 413 * resourceVector.size() + 5);
+		meatPosition.x = rand() % (int)videoResolution.x;
+		meatPosition.y = rand() % (int)videoResolution.y;
+		resourceVector.push_back(factory.createMeat(meatSprite, meatPosition));
+
+	}
+
+
 }
 
 void Game::handleInput()
@@ -170,28 +292,10 @@ void Game::handleInput()
 	/*Handling input by event*/
 	while (gameWindow.pollEvent(inputEvent))
 	{
-		if (inputEvent.type == Event::KeyPressed)
+		/*Game input*/
+		if (state == State::PLAYING)
 		{
-			//Splashscreen
-			if (state == State::SPLASH)
-			{
-				if (inputEvent.key.code == Keyboard::Return && fadein)
-				{
-					fadein = false;
-				}
-				else if (inputEvent.key.code == Keyboard::Return && !fadein)
-				{
-					fadeout = true;
-				}
-			}
-			//Menu
-			if (state == State::MENU)
-			{
-				//TODO
-			}
-
-			//Game
-			if (state == State::PLAYING)
+			if (inputEvent.type == Event::KeyPressed)
 			{
 				//Toggling Debug Mode
 				if (inputEvent.key.code == Keyboard::F1 && debugModeActive == 1)
@@ -283,14 +387,131 @@ void Game::handleInput()
 				}
 			}
 		}
+
+		/*Splashscreen input*/
+		if (state == State::SPLASH)
+		{
+			if (inputEvent.type == Event::KeyPressed)
+			{
+				if (inputEvent.key.code == Keyboard::Return && fadein)
+				{
+					fadein = false;
+				}
+				else if (inputEvent.key.code == Keyboard::Return && !fadein)
+				{
+					fadeout = true;
+				}
+			}
+		}
+
+		/*Menu input*/
+		if (state == State::MENU)
+		{
+			//Hovering over buttons
+			if (inputEvent.type == Event::MouseMoved)
+			{
+				//Play button
+				if (isPointOverText(Vector2f(inputEvent.mouseMove.x, inputEvent.mouseMove.y), playText))
+				{
+					playText.setFillColor(Color::Yellow);
+				}
+				else
+				{
+					playText.setFillColor(Color::White);
+				}
+
+				//Help button
+				if (isPointOverText(Vector2f(inputEvent.mouseMove.x, inputEvent.mouseMove.y), helpText))
+				{
+					helpText.setFillColor(Color::Yellow);
+				}
+				else
+				{
+					helpText.setFillColor(Color::White);
+				}
+
+				//Exit button
+				if (isPointOverText(Vector2f(inputEvent.mouseMove.x, inputEvent.mouseMove.y), exitText))
+				{
+					exitText.setFillColor(Color::Yellow);
+				}
+				else
+				{
+					exitText.setFillColor(Color::White);
+				}
+			}
+
+			//Clicking
+			if (inputEvent.type == Event::MouseButtonPressed)
+			{
+				//Play button
+				if (inputEvent.mouseButton.button == Mouse::Button::Left && isPointOverText(Vector2f(inputEvent.mouseButton.x, inputEvent.mouseButton.y), playText))
+				{
+					//Clear background objects if opening game for the first time
+					if (!backgroundObjectsCleared)
+					{
+						entityVector.clear();
+						resourceVector.clear();
+						backgroundObjectsCleared = true;
+					}
+
+					//Change game state
+					gameSpeed = 1;
+					state = State::PLAYING;
+				}
+
+				//Help button
+				if (inputEvent.mouseButton.button == Mouse::Button::Left && isPointOverText(Vector2f(inputEvent.mouseButton.x, inputEvent.mouseButton.y), helpText))
+				{
+					state = State::HELP;
+				}
+
+				//Exit button
+				if (inputEvent.mouseButton.button == Mouse::Button::Left && isPointOverText(Vector2f(inputEvent.mouseButton.x, inputEvent.mouseButton.y), exitText))
+				{
+					gameWindow.close();
+				}
+
+			}
+		}
+
+		/*Help input*/
+		if (state == State::HELP)
+		{
+			//Hovering over button
+			if (inputEvent.type == Event::MouseMoved)
+			{
+				//Thanks button
+				if (isPointOverText(Vector2f(inputEvent.mouseMove.x, inputEvent.mouseMove.y), thanksText))
+				{
+					thanksText.setFillColor(Color::Yellow);
+				}
+				else
+				{
+					thanksText.setFillColor(Color::White);
+				}
+			}
+
+			//Clicking button
+			if (inputEvent.type == Event::MouseButtonPressed)
+			{
+				//Thanks button
+				if (inputEvent.mouseButton.button == Mouse::Button::Left && isPointOverText(Vector2f(inputEvent.mouseButton.x, inputEvent.mouseButton.y), thanksText))
+				{
+					//Go back to menu
+					state = State::MENU;
+				}
+			}
+		}
 	}
 
 
 	/*Handling input by polling*/
-	//Closing game
-	if (Keyboard::isKeyPressed(Keyboard::Escape))
+	//Getting back to the menu
+	if (Keyboard::isKeyPressed(Keyboard::Escape) && state == State::PLAYING)
 	{
-		gameWindow.close();
+		gameSpeed = 0;
+		state = State::MENU;
 	}
 }
 
@@ -302,12 +523,8 @@ void Game::updateScene()
 	dt = clock.restart() * gameSpeed;
 
 	/*Updating game objects*/
-	if (state == State::PLAYING)
+	if (state != State::SPLASH)
 	{
-		//Getting vector sizes
-		eVectorSize = entityVector.size();
-		rVectorSize = resourceVector.size();
-
 		//Updating entity vector
 		for (auto p : entityVector)
 		{
@@ -326,11 +543,6 @@ void Game::updateScene()
 		logic.processLogic(dt, entityVector, resourceVector);
 
 		/*DEBUG MODE*/
-
-		//Refreshing vector size
-		eVectorSize = entityVector.size();
-		rVectorSize = resourceVector.size();
-
 		//Constructing and setting stringstream for FPS text display
 		std::stringstream ssFPS;
 
@@ -408,14 +620,14 @@ void Game::drawScene()
 		}
 		else if (fadeout && alpha == 0)
 		{
-			state = State::PLAYING;
+			state = State::MENU;
 		}
 
 		gameWindow.draw(splashscreenSprite);
 	}
 
 	//Draw game
-	else if (state == State::PLAYING)
+	else if (state != State::SPLASH)
 	{
 		//Drawing background
 		gameWindow.draw(background, &backgroundTexture);
@@ -469,8 +681,31 @@ void Game::drawScene()
 
 		gameWindow.draw(fpsText);
 	}
+
+	//Draw menu on top of rendered scene
+	if (state == State::MENU)
+	{
+		gameWindow.draw(titleText);
+		gameWindow.draw(playText);
+		gameWindow.draw(helpText);
+		gameWindow.draw(exitText);
+	}
+
+	if (state == State::HELP)
+	{
+		gameWindow.draw(helpSprite);
+		gameWindow.draw(thanksText);
+	}
 	
 	//Displaying scene
 	gameWindow.display();
 
+}
+
+bool Game::isPointOverText(const sf::Vector2f Position, const Text &Text)
+{
+	return	(Position.x < (Text.getGlobalBounds().width / 2) + Text.getPosition().x)
+		&& (Position.x > (Text.getPosition().x - (Text.getGlobalBounds().width / 2)))
+		&& (Position.y < (Text.getGlobalBounds().height / 2) + Text.getPosition().y + Text.getGlobalBounds().height)
+		&& (Position.y > (Text.getPosition().y - (Text.getGlobalBounds().height / 2) + Text.getGlobalBounds().height));
 }
