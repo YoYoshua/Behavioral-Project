@@ -86,7 +86,7 @@ Entity::Entity(Sprite childSprite, Sprite adultSprite, std::string sex, Vector2f
 
 	m_InternalClock = 0;
 	m_IdleCooldown = 5.f;
-	m_MateCooldown = 5.f;
+	m_MateCooldown = 3.f;
 
 	m_VisionCircle.setRadius(150);
 	m_VisionCircle.setOrigin(150, 150);
@@ -708,7 +708,7 @@ bool Entity::mate(Time dt, std::shared_ptr<Entity> partner)
 		partner->m_ReproductionValue = 0.f;
 		return true;
 	}
-	else if (m_MateCooldown > 0.f && m_MateCooldown <= 5.f)
+	else if (m_MateCooldown > 0.f && m_MateCooldown <= 2.f)
 	{
 		m_MateCooldown -= dt.asSeconds();
 		return false;

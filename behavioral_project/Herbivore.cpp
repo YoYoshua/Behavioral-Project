@@ -64,7 +64,7 @@ Herbivore::Herbivore(Sprite childSprite, Sprite adultSprite, std::string sex, Ve
 
 	m_InternalClock = 0;
 	m_IdleCooldown = 5.f;
-	m_MateCooldown = 5.f;
+	m_MateCooldown = 2.f;
 
 	m_VisionCircle.setRadius(250);
 	m_VisionCircle.setOrigin(250, 250);

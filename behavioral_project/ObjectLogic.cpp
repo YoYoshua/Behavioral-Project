@@ -216,7 +216,7 @@ void ObjectLogic::interact(Time dt, std::shared_ptr<Entity> entity, std::vector<
 			}
 
 			//Reproducing
-			if (entity->isMating() && p->isMating() && distance < 20 && p->getType() == entity->getType() && entity->getSex() != p->getSex())
+			if (entity->isMating() && p->isMating() && distance == 0 && p->getType() == entity->getType() && entity->getSex() != p->getSex())
 			{
 				if (entity->mate(dt, p))
 				{
@@ -225,20 +225,20 @@ void ObjectLogic::interact(Time dt, std::shared_ptr<Entity> entity, std::vector<
 						entitiesCreated.push_back(m_Factory->createHerbivore(entity->getPosition()));
 
 						//Setting icons
-						(entitiesCreated.back())->setDangerSprite(p->getDangerSprite());
-						(entitiesCreated.back())->setHungerSprite(p->getHungerSprite());
-						(entitiesCreated.back())->setThirstySprite(p->getThirstySprite());
-						(entitiesCreated.back())->setMatingSprite(p->getMatingSprite());
+						(entitiesCreated.back())->setDangerSprite(entity->getDangerSprite());
+						(entitiesCreated.back())->setHungerSprite(entity->getHungerSprite());
+						(entitiesCreated.back())->setThirstySprite(entity->getThirstySprite());
+						(entitiesCreated.back())->setMatingSprite(entity->getMatingSprite());
 					}
 					else if (entity->getType() == "CARNIVORE")
 					{
 						entitiesCreated.push_back(m_Factory->createCarnivore(entity->getPosition()));
 
 						//Setting icons
-						(entitiesCreated.back())->setDangerSprite(p->getDangerSprite());
-						(entitiesCreated.back())->setHungerSprite(p->getHungerSprite());
-						(entitiesCreated.back())->setThirstySprite(p->getThirstySprite());
-						(entitiesCreated.back())->setMatingSprite(p->getMatingSprite());
+						(entitiesCreated.back())->setDangerSprite(entity->getDangerSprite());
+						(entitiesCreated.back())->setHungerSprite(entity->getHungerSprite());
+						(entitiesCreated.back())->setThirstySprite(entity->getThirstySprite());
+						(entitiesCreated.back())->setMatingSprite(entity->getMatingSprite());
 					}
 				}
 
